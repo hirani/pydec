@@ -3,6 +3,8 @@ from numpy import vstack, hstack, ones, arange, empty, alltrue, array, \
 
 from scipy.sparse import csr_matrix
 
+__all__ = ['cube_array_search', 'cube_array_boundary']
+
 def cube_array_search(k_face_array,k_faces):
     """
     Find the row indices (of s) corresponding to the
