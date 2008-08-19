@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<mesh type="simplicial_mesh">
+	<elements>
+		<file name="square_8.elements"/>
+	</elements>
+	<vertices>
+		<file name="square_8.vertices"/>
+	</vertices>
+</mesh>

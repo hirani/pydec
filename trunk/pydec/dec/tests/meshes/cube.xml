@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<mesh>
+  <vertices>
+    <file name='cube.vertices'/>
+  </vertices>
+  <elements type='simplex' dimension='3'>
+    <file name='cube.elements'/>
+  </elements>
+</mesh>

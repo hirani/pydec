@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<mesh>
+  <vertices>
+    <file name='sphere3.vertices'/>
+  </vertices>
+  <elements type='simplex' dimension='2'>
+    <file name='sphere3.elements'/>
+  </elements>
+</mesh>
