@@ -51,22 +51,21 @@ def cube_array_boundary(cubes,dim):
 
     faces = empty((num_faces,cubes.shape[1]+1),dtype='int32')
 
+    # Use simplex orientation to determine sign of boundary faces
     for i in range(cube_dim):
+        # Faces originating at cube origin
         rows = faces[(2*i+0)*num_cubes:(2*i+1)*num_cubes]
-
         rows[:,:top_dim+i ]    = cubes[:,:top_dim+i   ]
         rows[:, top_dim+i:-2]  = cubes[:, top_dim+i+1:]
         rows[:,-2]             = arange(num_cubes)
         rows[:,-1]             = (-1)**(i+1)
 
-
+        # Faces originating at other corners of cube
         rows = faces[(2*i+1)*num_cubes:(2*i+2)*num_cubes]
-
         rows[:,:top_dim+i ]    = cubes[:,:top_dim+i   ]
         rows[:, top_dim+i:-2]  = cubes[:, top_dim+i+1:]
         rows[:,-2]             = arange(num_cubes)
         rows[:,-1]             = (-1)**(i+2)
-
         rows[arange(rows.shape[0]),cubes[:,top_dim+i]] += 1
 
     #sort rows

@@ -129,4 +129,51 @@ class test_cube_array_boundary(TestCase):
                                           [ 0, 0, 1, 0],
                                           [ 0, 0, 0, 1]] )
 
+    def test_boundary2_2D_with_holes(self):
+        """boundary_2 of 2D mesh [[X0X]]"""
+        cubes = array([[0,0,0,1],
+                       [2,0,0,1]])
+        dim = 2
+
+        faces,boundary = cube_array_boundary(cubes, dim)
+
+        assert_equal(faces, [[0,0,0],
+                             [0,0,1],
+                             [0,1,0],
+                             [1,0,1],
+                             [2,0,0], 
+                             [2,0,1],
+                             [2,1,0],
+                             [3,0,1]])
+        assert_equal(boundary.toarray(), [[ 1, 0],
+                                          [-1, 0],
+                                          [-1, 0],
+                                          [ 1, 0],
+                                          [ 0, 1],
+                                          [ 0,-1],
+                                          [ 0,-1],
+                                          [ 0, 1]] )
+
+
+
+    def test_boundary2_3D(self):
+        """boundary_2 of a 3D cube"""
+        cubes = array([[0,0,0,0,1,2]])
+        dim = 3
+
+        faces,boundary = cube_array_boundary(cubes, dim)
+
+        assert_equal(faces, [[0,0,0,0,1],
+                             [0,0,0,0,2],
+                             [0,0,0,1,2],
+                             [0,0,1,0,1],
+                             [0,1,0,0,2],
+                             [1,0,0,1,2]] )
+        assert_equal(boundary.toarray(), [[-1],
+                                          [ 1],
+                                          [-1],
+                                          [ 1],
+                                          [-1],
+                                          [ 1]] )
+
 
