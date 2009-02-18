@@ -5,7 +5,7 @@ from scipy import array
 from pydec.mesh.simplex import simplex,simplicial_mesh
 
   
-class test_simplicial_mesh(NumpyTestCase):
+class test_simplicial_mesh(TestCase):
     def setUp(self):
         self.meshes = []
         self.meshes.append((array([[0],[1]]),array([[0,1]])))

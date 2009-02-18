@@ -1,8 +1,10 @@
+#!/usr/bin/env python
 
 def configuration(parent_package='',top_path=None):
     from numpy.distutils.misc_util import Configuration
 
-    config = Configuration('pydec',parent_package,top_path)
+    config = Configuration('pydec', parent_package, top_path)
+
     config.add_subpackage('dec')
     config.add_subpackage('fem')
     config.add_subpackage('io')    

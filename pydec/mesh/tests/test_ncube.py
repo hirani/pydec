@@ -5,7 +5,7 @@ from numpy import arange, prod, array
 from pydec.mesh.ncube import nCube
 
   
-class test_relative_partiy(NumpyTestCase):
+class test_relative_partiy(TestCase):
     def setUp(self):
         test_cases = []
         test_cases.append(([0],0))
