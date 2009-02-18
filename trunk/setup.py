@@ -9,13 +9,16 @@ import os
 import sys
 
 CLASSIFIERS = """\
-Development Status :: 4 - Beta
+Development Status :: 5 - Production/Stable
 Intended Audience :: Science/Research
 Intended Audience :: Developers
-License :: OSI Approved
+Intended Audience :: Education
+License :: OSI Approved :: BSD License
 Programming Language :: Python
+Topic :: Education
 Topic :: Software Development
 Topic :: Scientific/Engineering
+Topic :: Scientific/Engineering :: Mathematics
 Operating System :: Microsoft :: Windows
 Operating System :: POSIX
 Operating System :: Unix
@@ -42,7 +45,6 @@ def configuration(parent_package='',top_path=None):
     return config
 
 def setup_package():
-
     from numpy.distutils.core import setup
     from numpy.distutils.misc_util import Configuration
 
@@ -53,15 +55,14 @@ def setup_package():
     sys.path.insert(0,os.path.join(local_path,'pydec')) # to retrive version
 
     try:
-        from version import version as version
         setup(
             name = 'pydec',
-            version = version, # will be overwritten by configuration version
             maintainer = "PyDEC Developers",
             maintainer_email = "wnbell@gmail.com",
             description = DOCLINES[0],
             long_description = "\n".join(DOCLINES[2:]),
             url = "http://www.graphics.cs.uiuc.edu/~wnbell/",
+            download_url = "http://code.google.com/p/pydec/downloads/list",
             license = 'BSD',
             classifiers=filter(None, CLASSIFIERS.split('\n')),
             platforms = ["Windows", "Linux", "Solaris", "Mac OS-X", "Unix"],
