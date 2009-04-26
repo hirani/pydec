@@ -33,7 +33,7 @@ class TestRipsSimplices(TestCase):
                      array([[0,1],[0,2],[1,2]]),
                      array([[0,1,2]]) ]
 
-        result = rips_simplices(edges, k=2)
+        result = rips_simplices(3, edges, 2)
 
         for r,e in zip(result,expected):
             assert_equal(r,e)
@@ -49,7 +49,7 @@ class TestRipsSimplices(TestCase):
                      array([[0,1,2],[0,1,5],[0,2,5],[0,3,4],[1,2,5]]),
                      array([[0,1,2,5]]) ]
 
-        result = rips_simplices(edges, k=3)
+        result = rips_simplices(6, edges, 3)
 
         for r,e in zip(result,expected):
             assert_equal(r,e)
@@ -113,7 +113,7 @@ class TestRipsComplex(TestCase):
         expected = [ matrix([[0,0,0]]),
                      matrix([[-1],[ 0],[ 1]]) ]
 
-        result = rips_chain_complex( simplices )
+        result = rips_chain_complex(simplices)
 
         for r,e in zip(result,expected):
             assert_equal(r.todense(),e)
@@ -131,7 +131,7 @@ class TestRipsComplex(TestCase):
                              [ 0, 1, 1]]),
                      matrix([[ 1],[-1],[ 1]]) ]
 
-        result = rips_chain_complex( simplices )
+        result = rips_chain_complex(simplices)
 
         for r,e in zip(result,expected):
             assert_equal(r.todense(),e)
