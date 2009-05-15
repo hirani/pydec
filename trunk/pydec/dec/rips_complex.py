@@ -6,7 +6,9 @@ from pydec.math import kd_tree
 from pydec.util import flatten
 
 from simplex_array import simplex_array_searchsorted
- 
+
+__all__ = ['rips_complex']
+
 class rips_complex:
     def __init__(self, vertices, delta):
         """Construct a Rips complex
@@ -224,7 +226,7 @@ def rips_simplices(num_vertices, edges, k):
     if k == 1 or edges.shape[0] == 0: return simplices
 
     # E[i,j] == 1 iff (i,j) is an edge and i < j
-    E = csr_matrix( (ones(len(edges), dtype='int32'), edges.T), shape=(num_vertices,num_vertices))
+    E = csr_matrix( (ones(len(edges), dtype='int8'), edges.T), shape=(num_vertices,num_vertices))
 
     k_faces = edges
 
@@ -234,10 +236,11 @@ def rips_simplices(num_vertices, edges, k):
 
         indptr  = arange(0, (n+1) * (len(k_faces)+1), (n+1) )
         indices = k_faces.ravel()
-        data    = ones(len(indices), dtype='int32')
+        data    = ones(len(indices), dtype='int8')
           
         F = csr_matrix((data, indices, indptr), shape=(len(k_faces), num_vertices))
 
+        # FE[i,j] == n+1 if all vertices in face i are adjacent to vertex j
         FE = F*E
         FE.data[FE.data != n+1] = 0
         FE.eliminate_zeros()
