@@ -1,4 +1,4 @@
-__all__ = ['is_wellcentered','circumcenter','circumcenter_barycoords']
+__all__ = ['is_wellcentered', 'circumcenter', 'circumcenter_barycoords']
 
 from numpy import bmat, hstack, vstack, dot, sqrt, ones, zeros, sum, \
         asarray
