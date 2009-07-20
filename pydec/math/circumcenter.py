@@ -1,25 +1,49 @@
-__all__ = ['is_wellcentered', 'circumcenter', 'circumcenter_barycoords']
+__all__ = ['is_wellcentered', 'circumcenter', 'circumcenter_barycentric']
 
 from numpy import bmat, hstack, vstack, dot, sqrt, ones, zeros, sum, \
         asarray
 from numpy.linalg import solve,norm
 
 def is_wellcentered(pts, tol=1e-8):
+    """Determines whether a set of points defines a well-centered simplex.
     """
-    Determines whether the M points in N dimensions define a 
-    well-centered simplex.
-    """
-    bary_coords = circumcenter_barycoords(pts)    
-    return min(bary_coords) > tol
+    barycentric_coordinates = circumcenter_barycentric(pts)    
+    return min(barycentric_coordinates) > tol
 
-def circumcenter_barycoords(pts):
-    """
-    Computes the barycentric coordinates of the circumcenter M, N-dimensional
-    points (1 <= M <= N + 1 and N >= 1). The points are given by the rows of 
-    an (M)x(N) dimensional matrix pts.
+def circumcenter_barycentric(pts):
+    """Barycentric coordinates of the circumcenter of a set of points.
     
+    Parameters
+    ----------
+    pts : array-like
+        An N-by-K array of points which define an (N-1)-simplex in K dimensional space.
+        N and K must satisfy 1 <= N <= K + 1 and K >= 1.
+
+    Returns
+    -------
+    coords : ndarray
+        Barycentric coordinates of the circumcenter of the simplex defined by pts.
+        Stored in an array with shape (K,)
+        
+    Examples
+    --------
+    >>> from pydec.math.circumcenter import *
+    >>> circumcenter_barycentric([[0],[4]])           # edge in 1D
+    array([ 0.5,  0.5])
+    >>> circumcenter_barycentric([[0,0],[4,0]])       # edge in 2D
+    array([ 0.5,  0.5])
+    >>> circumcenter_barycentric([[0,0],[4,0],[0,4]]) # triangle in 2D
+    array([ 0. ,  0.5,  0.5])
+
+    See Also
+    --------
+    circumcenter_barycentric
+   
+    References
+    ----------
     Uses an extension of the method described here:
     http://www.ics.uci.edu/~eppstein/junkyard/circumcenter.html
+
     """    
 
     pts = asarray(pts)
@@ -38,28 +62,42 @@ def circumcenter_barycoords(pts):
     return bary_coords
     
 def circumcenter(pts):
-    """
-    Computes the circumcenter and circumradius of M, N-dimensional
-    points (1 <= M <= N + 1 and N >= 1). The points are given by the rows of 
-    an (M)x(N) dimensional maatrix pts.  
+    """Circumcenter and circumradius of a set of points.
     
-    Returns a tuple (center, radius) where center is a
-    column vector of length N and radius is a scalar.
+    Parameters
+    ----------
+    pts : array-like
+        An N-by-K array of points which define an (N-1)-simplex in K dimensional space.
+        N and K must satisfy 1 <= N <= K + 1 and K >= 1.
+
+    Returns
+    -------
+    center : ndarray
+        Circumcenter of the simplex defined by pts.  Stored in an array with shape (K,)
+    radius : float
+        Circumradius of the circumsphere that circumscribes the points defined by pts.
         
-        In the case of four points in 3D, pts is a 4x3 matrix arranged as:
-            
-        pts = [ x0 y0 z0 ]
-              [ x1 y1 z1 ]
-              [ x2 y2 z2 ]          
-              [ x3 y3 z3 ]
-        
-        with return value ([ cx cy cz ], R)    
-    
+    Examples
+    --------
+    >>> circumcenter([[0],[1]])             # edge in 1D
+    (array([ 0.5]), 0.5)
+    >>> circumcenter([[0,0],[1,0]])         # edge in 2D
+    (array([ 0.5,  0. ]), 0.5)
+    >>> circumcenter([[0,0],[1,0],[0,1]])   # triangle in 2D
+    (array([ 0.5,  0.5]), 0.70710678118654757)
+
+    See Also
+    --------
+    circumcenter_barycentric
+   
+    References
+    ----------
     Uses an extension of the method described here:
     http://www.ics.uci.edu/~eppstein/junkyard/circumcenter.html
+
     """
     pts = asarray(pts)      
-    bary_coords = circumcenter_barycoords(pts)
+    bary_coords = circumcenter_barycentric(pts)
     center = dot(bary_coords,pts)
     radius = norm(pts[0,:] - center)
     return (center,radius)

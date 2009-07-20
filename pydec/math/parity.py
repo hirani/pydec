@@ -109,4 +109,3 @@ def permutation_parity(perm, check_input=True):
 
     return (n - num_cycles) % 2
 
-
