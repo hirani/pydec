@@ -28,7 +28,6 @@ def unsigned_volume(pts):
 
     Examples
     --------
-
     >>> # 0-simplex point 
     >>> unsigned_volume( [[0,0]] )
     1.0
@@ -81,7 +80,6 @@ def signed_volume(pts):
 
     Examples
     --------
-
     >>> # 1-simplex line segment
     >>> signed_volume( [[0],[1]] )           
     1.0
