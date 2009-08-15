@@ -5,7 +5,6 @@ from info import __doc__
 
 from combinatorial import *
 from parity import *
-from graph import *
 from volume import *
 from circumcenter import *
 from kd_tree import *
