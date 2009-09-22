@@ -6,14 +6,11 @@ from simplex_array import simplex_array_parity, simplex_array_boundary, simplex_
 __all__ = ['abstract_simplicial_complex']
 
 class abstract_simplicial_complex:
-    def __init__(self, vertices, simplices):
+    def __init__(self, simplices):
         """Construct an abstract simplicial complex
 
         Parameters
         ----------
-        vertices : array_like
-            An N-by-D array of vertex coordinates where N is the 
-            number of vertices and D is the dimension of the space
         simplices : list of arrays
             Maximal simplices of each dimension
             TODO
@@ -22,9 +19,8 @@ class abstract_simplicial_complex:
         --------
         >>> from pydec.dec import abstract_simplicial_complex
         >>> from numpy import array
-        >>> vertices = array([[0,0],[1,0],[1,1],[0,1],[2,0], dtype='float')
         >>> simplices = [array([[4]]), array([[0,3]])]
-        >>> asc = abstract_simplicial_complex(vertices, simplices)
+        >>> asc = abstract_simplicial_complex(simplices)
 
         TODO
 
@@ -38,8 +34,6 @@ class abstract_simplicial_complex:
 
         """
 
-        vertices = atleast_2d(vertices)
-       
         # convert array-like objects to arrays
         simplices = [atleast_2d(s) for s in simplices]
 
@@ -67,13 +61,16 @@ class abstract_simplicial_complex:
             if simplices[d] is not None:
                 old_s = s
 
+                # sort columns to ensure user-defined faces are in canonical format
+                simplices[d].sort()
+
                 # merge user-defined faces with boundary faces
                 s = vstack((s,simplices[d]))
-
-                #sort rows
+                
+                # sort rows to bring equivalent elements together
                 s = s[lexsort(s.T[::-1])]
 
-                #find unique simplices
+                # find unique simplices
                 mask = -hstack((array([False]),alltrue(s[1:] == s[:-1],axis=1)))
                 s = s[mask]
 
@@ -84,15 +81,15 @@ class abstract_simplicial_complex:
                 B = B.tocoo(copy=False)
                 B = sparse.coo_matrix((B.data, (remap[B.row], B.col)), (s.shape[0], B.shape[1]))
                 B = B.tocsr()
-
-                
+            
+            # faces are already in canonical format, so parity is even
             parity = zeros(s.shape[0],dtype=s.dtype)
             
             simplices[d]       = s
             chain_complex[d+1] = B
 
         # compute 0-simplices and boundary operator
-        simplices[0]     = arange(vertices.shape[0])
+        simplices[0]     = arange(simplices[0].max() + 1).reshape(-1,1)
         chain_complex[0] = sparse.csr_matrix( (1,len(s)), dtype='uint8')
 
         # store the cochain complex
@@ -101,16 +98,12 @@ class abstract_simplicial_complex:
         cochain_complex += [ sparse.csc_matrix( (1, Bn.shape[1]), dtype=Bn.dtype) ] 
 
         # store the data members
-        self.vertices  = vertices
         self.simplices = simplices
         self._chain_complex   = chain_complex
         self._cochain_complex = cochain_complex
 
     def complex_dimension(self):
         return len(self.cochain_complex()) - 1
-
-    def embedding_dimension(self):
-        return self.vertices.shape[1]
 
     def complex(self):
         return self.simplices
