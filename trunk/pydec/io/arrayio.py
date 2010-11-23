@@ -1,6 +1,6 @@
 __all__ = ['read_array','write_array','read_header']
 
-from scipy.io import read_array,write_array
+#from scipy.io import read_array,write_array
 from scipy import shape,rank
 import numpy
 import scipy
