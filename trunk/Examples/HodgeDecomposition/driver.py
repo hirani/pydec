@@ -28,17 +28,17 @@ def hodge_decomposition(omega):
 
     """
     sc = omega.complex    
-    K = omega.k
-    alpha = sc.get_cochain(K - 1)
-    beta  = sc.get_cochain(K + 1)    
+    p = omega.k
+    alpha = sc.get_cochain(p - 1)
+    beta  = sc.get_cochain(p + 1)    
 
     # Solve for alpha
-    A = delta(d(sc.get_cochain_basis(K - 1))).v
+    A = delta(d(sc.get_cochain_basis(p - 1))).v
     b = delta(omega).v
     alpha.v = cg( A, b, tol=1e-8 )[0]
 
     # Solve for beta
-    A = d(delta(sc.get_cochain_basis(K + 1))).v
+    A = d(delta(sc.get_cochain_basis(p + 1))).v
     b = d(omega).v
     beta.v = cg( A, b, tol=1e-8 )[0]
     
