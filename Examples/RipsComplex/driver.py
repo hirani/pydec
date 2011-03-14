@@ -1,4 +1,9 @@
+"""
+Detection of holes in coverage in an idealized abstraction of a sensor
+network. Hodge decomposition of a random cochain is used to compute a
+harmonic cochain.
 
+"""
 from scipy import rand
 from scipy.linalg import norm
 from scipy.sparse.linalg import cg
@@ -8,25 +13,20 @@ from pydec.dec.rips_complex import rips_complex
 
 
 pts = read_array('300pts.mtx')  # 300 random points in 2D
-
 rc = rips_complex( pts, 0.15 )
 
 simplices = rc.simplices
 
-cmplx = rc.chain_complex()  # boundary operators [ b0, b1, b2, b3 ]
-
+cmplx = rc.chain_complex()  # boundary operators [ b0, b1, b2 ]
 b1 = cmplx[1].astype(float)  # edge boundary operator
 b2 = cmplx[2].astype(float)  # face boundary operator
 
 x = rand(b1.shape[1]) # random 1-chain
-
 # Decompose x using discrete Hodge decomposition
 alpha = cg( b1 * b1.T, b1   * x, tol=1e-8)[0]
 beta  = cg( b2.T * b2, b2.T * x, tol=1e-8)[0]
-
 h = x - (b1.T * alpha) - (b2 * beta) # harmonic component of x
-
-h /= abs(h).max() #normalize h
+h /= abs(h).max() # normalize h
 
 
 #print 'norm( h )',norm(h)
@@ -61,5 +61,4 @@ for i in range(1,4):
     axis('equal')
     xlim(-0.1,1.1)
     ylim(-0.1,1.1)
-show()
 
