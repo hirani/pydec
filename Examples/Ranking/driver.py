@@ -24,9 +24,8 @@ omega = data[:,-1] # pairwise comparisons
 B1 = asc.chain_complex()[1] # boundary matrix
 alpha = lsqr(B1.T, omega)[0] # solve least squares problem
 
-# Scale minimum to 0 and maximum to 100
+# Set the minimum to 0
 alpha = alpha - alpha.min()
-alpha = alpha / alpha.max() * 100
 
 print alpha
 
