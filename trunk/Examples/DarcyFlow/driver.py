@@ -14,7 +14,7 @@ from numpy import mat, zeros, sort, asarray, loadtxt, array, dot, \
 from numpy.linalg import norm, det
 from scipy.sparse import bmat
 from scipy.sparse.linalg import spsolve
-from matplotlib.pylab import figure, gca, triplot
+from matplotlib.pylab import figure, gca, triplot, show
 from pydec import simplicial_complex, simplex_quivers, signed_volume
 
 velocity = array([1.,0])
@@ -100,3 +100,6 @@ ax.quiver(v_bases[:,0],v_bases[:,1],v_arrows[:,0],v_arrows[:,1],
 ax.axis('equal')
 ax.set_title('Flux interpolated using Whitney map \n' \
           ' and visualized as velocity at barycenters\n')
+
+show()
+
