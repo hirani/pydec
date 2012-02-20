@@ -1,7 +1,7 @@
 __all__ = ['triplot','lineplot','lineplot2','cube_quivers','simplex_quivers']
 
 try:
-    import matplotlib
+    import matplotlib.collections, matplotlib.pylab
 except ImportError:
     import warnings
     warnings.warn("matplotlib not installed, some loss of functionality will result")

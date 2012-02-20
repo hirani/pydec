@@ -62,3 +62,5 @@ for i in range(1,4):
     xlim(-0.1,1.1)
     ylim(-0.1,1.1)
 
+show()
+

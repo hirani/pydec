@@ -14,7 +14,7 @@ from pydec import simplicial_complex, d, delta, whitney_innerproduct, \
 from numpy import loadtxt
 from scipy import real, zeros
 from scipy.linalg import eig
-from matplotlib.pylab import quiver, figure, triplot
+from matplotlib.pylab import quiver, figure, triplot, show
 
 # Read in mesh data from files and construct complex
 vertices = loadtxt('vertices.txt', dtype=float)
@@ -57,3 +57,6 @@ ax.set_title('Mode #' + str(N+1))
 ax.quiver(bases[:,0],bases[:,1],arrows[:,0],arrows[:,1])
 ax.triplot(sc.vertices[:,0], sc.vertices[:,1], sc.simplices)
 ax.axis('equal')
+
+show()
+

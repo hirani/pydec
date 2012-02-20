@@ -2,9 +2,11 @@
 __all__ = ['barycentric_gradients','whitney_innerproduct','regular_cube_innerproduct']
 
 from scipy import matrix,sparse,zeros,ones,eye,allclose,alltrue, \
-                isreal,real,dot,concatenate,factorial,comb,sqrt, \
+                isreal,real,dot,concatenate,sqrt, \
                 arange,array,inner,vstack,atleast_2d,empty,tile, \
                 asarray,all,sum,hstack
+
+from scipy.misc import factorial, comb
 from scipy.linalg import det,inv
 from scipy.sparse import coo_matrix
               
