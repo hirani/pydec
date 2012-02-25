@@ -99,7 +99,7 @@ for i in range(4):
 H = ortho(vstack(H))
 
 # plot the results
-from pylab import figure, title, quiver, axis
+from pylab import figure, title, quiver, axis, show
 from pydec import triplot, simplex_quivers
 
 for n,h in enumerate(H):
@@ -110,4 +110,6 @@ for n,h in enumerate(H):
     bases,dirs = simplex_quivers(sc,h)
     quiver(bases[:,0],bases[:,1],dirs[:,0],dirs[:,1])
     axis('equal')
+
+show()
 
