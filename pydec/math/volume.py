@@ -58,7 +58,7 @@ def unsigned_volume(pts):
         return 1.0 
         
     A = pts[1:] - pts[0]
-    return sqrt(det(inner(A,A)))/factorial(M)
+    return sqrt(abs(det(inner(A,A))))/factorial(M)
     
     
 def signed_volume(pts):
