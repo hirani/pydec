@@ -1,7 +1,7 @@
 __all__ = ['read_array','write_array','read_header']
 
 #from scipy.io import read_array,write_array
-from scipy import shape,rank
+from scipy import shape,ndim
 import numpy
 import scipy
 import sys
@@ -101,7 +101,7 @@ def write_array(fid,A,format='binary'):
     if type(A) is numpy.ndarray:
         A = numpy.ascontiguousarray(A)  #strided arrays break in write
         if format == 'basic':
-            if rank(A) > 2: raise ArrayIOException('basic format only works for rank 1 or 2 arrays')
+            if ndim(A) > 2: raise ArrayIOException('basic format only works for rank 1 or 2 arrays')
             write_basic(fid,A)
         else:            
             write_ndarray(fid,A,format)
@@ -112,7 +112,7 @@ def write_array(fid,A,format='binary'):
         try:
             A = asarray(A)
             if format == 'basic':
-                if rank(A) > 2: raise ArrayIOException('basic format only works for rank 1 or 2 arrays')
+                if ndim(A) > 2: raise ArrayIOException('basic format only works for rank 1 or 2 arrays')
                 write_basic(fid,A)
             else:            
                 write_ndarray(fid,A,format)
@@ -177,7 +177,7 @@ def write_basic(fid,A):
 def ndarray_header(A):
     header = ArrayHeader()
     header['type'] = 'ndarray'
-    header['rank'] = rank(A)
+    header['rank'] = ndim(A)
     header['dims'] = ','.join(map(str,A.shape))
     header['dtype'] = A.dtype.name
     return header

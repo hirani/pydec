@@ -58,6 +58,7 @@ class simplicial_complex(list):
 
         self.vertices  = self.mesh['vertices']
         self.simplices = self.mesh['elements']
+        self.signed_hodge = None
     
         self.build_complex(self.simplices)
     
@@ -215,9 +216,26 @@ class simplicial_complex(list):
         for dim,data in enumerate(self):
             data.dual_volume = zeros((data.num_simplices,))
 
-        temp_centers = zeros((self.complex_dimension()+1,self.embedding_dimension()))
-        for i,s in enumerate(self.simplices):
-            self.__compute_dual_volume(simplex(s),temp_centers,self.complex_dimension())
+        temp_centers = zeros((self.complex_dimension()+1,
+                              self.embedding_dimension()))
+
+        if self.unsigned_hodge == None:
+            for i,s in enumerate(self.simplices):
+                self.__compute_dual_volume_signed(
+                    simplex(s), temp_centers, self.complex_dimension())
+        elif self.unsigned_hodge == True:
+            for i,s in enumerate(self.simplices):
+                self.__compute_dual_volume_signed(
+                    simplex(s), temp_centers self.complex_dimension())
+        elif self.unsigned_hodge == False:
+            for i,s in enumerate(self.simplices):
+                self.__compute_dual_volume(
+                    simplex(s), temp_centers self.complex_dimension())
+        else:
+            raise ValueError("Incorrect value assigned for " +
+                             "simplicial_complex object\'s " + 
+                             "unsigned_hodge. Can only be " +
+                             "None, True, or False.")
             
     def __compute_dual_volume(self,s,pts,dim):        
         data = self[dim]
@@ -228,6 +246,61 @@ class simplicial_complex(list):
             for bs in s.boundary():
                 self.__compute_dual_volume(bs,pts,dim-1)
 
+    def __compute_dual_volume_signed(self,s,parent,pts,bpts,signs,dim):
+        data = self[dim]
+        index = data.simplex_to_index[s]  
+        pts[dim] = data.circumcenter[index]
+        bpts[dim] = data.circumcenter_barycentric[index]
+        if parent is not None:
+            opposite_vertex = list(set(parent) - set(s))[0]
+            ov_index = list(parent).index(opposite_vertex)
+            # To Do: Does not work for 2-dimensional complex embedded
+            #        in 3-dimensions
+            if dim == 0:
+                if self.complex_dimension() == 2:
+                    sgn = signs[dim + 1]
+                elif self.complex_dimension() == 3:
+                    sgn = signs[dim + 1] * signs[dim + 2]
+                else:
+                    if self.unsigned_hodge == False
+                        
+                    raise NotImplementedError
+                data.dual_volume[index] += (sgn *
+                                            unsigned_volume(pts[dim:,:]))
+            elif dim == 1:
+                if self.complex_dimension() == 2:
+                    sgn = sign(dot(pts[-1] - pts[-2],
+                                   self.vertices[opposite_vertex] -
+                                   pts[-2]))
+                    signs[dim] = sgn
+                    data.dual_volume[index] += (sgn *
+                                                unsigned_volume(pts[dim:,:]))
+                elif self.complex_dimension() == 3:
+                    sgn = sign(dot(pts[-2] - pts[-3],
+                                   self.vertices[opposite_vertex] -
+                                   pts[-3]))
+                    signs[dim] = sgn
+                    data.dual_volume[index] += (sgn * signs[dim + 1] *
+                                                unsigned_volume(pts[dim:,:]))
+                else:
+                    raise NotImplementedError
+            elif dim == 2:
+                if self.complex_dimension() == 3:
+                    sgn = sign(dot(pts[-1] - pts[-2],
+                                   self.vertices[opposite_vertex] -
+                                   pts[-2]))
+                    signs[dim] = sgn
+                    data.dual_volume[index] += (sgn *
+                                                unsigned_volume(pts[dim:,:]))
+                else:
+                    raise NotImplementedError
+            else:
+                raise NotImplementedError
+        else:
+            data.dual_volume[index] += unsigned_volume(pts[dim:,:])
+        if dim > 0:
+            for bs in s.boundary():
+                self.__compute_dual_volume(bs,s,pts,bpts,signs,dim-1)
 
     def boundary(self):
         """Return a list of the boundary simplices, i.e. the faces of the top level simplices that occur only once

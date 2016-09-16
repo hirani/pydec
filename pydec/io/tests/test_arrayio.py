@@ -1,6 +1,6 @@
 from pydec.testing import *
 
-from scipy import arange, prod, reshape, rand, random, allclose, rank, zeros
+from scipy import arange, prod, reshape, rand, random, allclose, ndim, zeros
 from scipy.sparse import csr_matrix, csc_matrix, coo_matrix
 
 from pydec.io.arrayio import write_array, read_array
@@ -25,7 +25,7 @@ class TestArrayIO():
             mats = [arange(prod(dims)).reshape(dims),rand(*dims)]    
             for A in mats:
                 formats = ['binary','ascii']
-                if rank(A) <= 2: formats.append('basic') #use basic when possible
+                if ndim(A) <= 2: formats.append('basic') #use basic when possible
                 for format in formats:
                     write_array(filename,A,format=format)
                     

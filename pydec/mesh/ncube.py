@@ -1,6 +1,6 @@
 __all__ = ['nCube','nCubeMesh','RegularCubeMesh']
 
-from numpy import ndarray,array,asarray,rank,bitwise_xor,eye,hstack,vstack,arange,zeros
+from numpy import ndarray,array,asarray,ndim,bitwise_xor,eye,hstack,vstack,arange,zeros
 from simplex import Simplex
 
 
@@ -35,12 +35,12 @@ class RegularCubeMesh:
         Return a cube array that represents this mesh's bitmap
         """
         cubes = vstack(self.bitmap.nonzero()).transpose()
-        cubes = hstack((cubes,zeros((cubes.shape[0],rank(self.bitmap)),dtype=cubes.dtype) + arange(rank(self.bitmap))))
+        cubes = hstack((cubes,zeros((cubes.shape[0],ndim(self.bitmap)),dtype=cubes.dtype) + arange(ndim(self.bitmap))))
 
         return cubes
     
     def dimension(self):
-        return rank(self.bitmap)
+        return ndim(self.bitmap)
 
 
 
@@ -48,18 +48,18 @@ class RegularCubeMesh:
 class nCube:
     def __init__(self,s,dtype='int32'):
         self.indices = array(s,dtype=dtype)
-        assert(self.indices.shape == (1,) or self.indices.shape == (2,)*rank(self.indices))
+        assert(self.indices.shape == (1,) or self.indices.shape == (2,)*ndim(self.indices))
         
         self.compute_corner_simplex()
 
     def compute_corner_simplex(self):
-        if rank(self.indices) < 2:
+        if ndim(self.indices) < 2:
             self.corner_simplex = Simplex(self.indices)
         else:
             corner_value = self.indices.min()
             corner_index = (self.indices == corner_value).nonzero()
 
-            rest = self.indices[[tuple(x) for x in bitwise_xor(eye(rank(self.indices),dtype=int),array(corner_index))]]
+            rest = self.indices[[tuple(x) for x in bitwise_xor(eye(ndim(self.indices),dtype=int),array(corner_index))]]
 
             parity = sum(corner_index)[0] % 2
 
@@ -112,8 +112,8 @@ class nCubeMesh:
         self.vertices = asarray(vertices, dtype='d')
 
     def manifold_dimension(self):
-        if rank(self.indices) >= 2:
-            return rank(self.indices)
+        if ndim(self.indices) >= 2:
+            return ndim(self.indices)
         else:
             return self.indices.shape[1]
     

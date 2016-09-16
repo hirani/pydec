@@ -1,7 +1,7 @@
 __all__ = ['loop_subdivision','triangulate_ncube']
 
 from pydec.math.combinatorial import combinations
-from scipy import concatenate,matrix,ravel,array,rank,vstack,hstack,zeros,arange,tile
+from scipy import concatenate,matrix,ravel,array,ndim,vstack,hstack,zeros,arange,tile
 
 
 def loop_subdivision(vertices,simplices):
@@ -49,7 +49,7 @@ def loop_subdivision(vertices,simplices):
 
 
 def triangulate_ncube(vertices,indices):
-    n_dims  = rank(indices) - 1
+    n_dims  = ndim(indices) - 1
     n_cubes = indices.shape[0]
     n_verts = vertices.shape[0]
     
