@@ -1,0 +1,10 @@
+# Git ignores for PyDEC.
+# Ported from original .svnignore
+
+*.pyc
+*.bak
+*.so
+*.swp
+dist
+build
+__svn_version__.py
