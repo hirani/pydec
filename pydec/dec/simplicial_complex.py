@@ -4,6 +4,7 @@ from warnings import warn
 
 import numpy
 import scipy
+from numpy import sign, array, dot, inner, ones, cross
 from scipy import sparse, zeros, asarray, mat, hstack
 
 import pydec
@@ -188,7 +189,7 @@ class simplicial_complex(list):
         for i,s in enumerate(data.simplices):
             pts = self.vertices[[x for x in s],:]
             data.circumcenter[i] = circumcenter(pts)[0]
-        
+
     def compute_primal_volume(self,dim):
         """Compute the volume of all simplices for a given dimension
 
@@ -216,12 +217,13 @@ class simplicial_complex(list):
 
         temp_centers = zeros((self.complex_dimension() + 1,
                                   self.embedding_dimension()))
-        for i,s in enumerate(self.simplices):
         temp_signs = ones(self.complex_dimension() + 1)
+        for i,s in enumerate(self.simplices):
             self.__compute_dual_volume(simplex(s),
-                                           temp_centers,
-                                           temp_signs,
-                                           self.complex_dimension())
+                                       None,
+                                       temp_centers,
+                                       temp_signs,
+                                       self.complex_dimension())
             
     ## def __compute_dual_volume(self,s,pts,dim):        
     ##     data = self[dim]
@@ -284,7 +286,7 @@ class simplicial_complex(list):
                                    self.vertices[opposite_vertex] -
                                    pts[-2]))
                     data.dual_volume[index] += (
-                        sgn * unsigned_volume(pts[dim:,:]))
+                        signs[dim] * unsigned_volume(pts[dim:,:]))
                 else:
                     # Embedding in greater than 3-dimensions not
                     # implemented                    
@@ -350,4 +352,6 @@ class simplicial_complex(list):
 SimplicialComplex = simplicial_complex
     
 
-    
+
+
+
