@@ -252,7 +252,9 @@ class simplicial_complex(list):
             opposite_vertex = list(set(parent) - set(s))[0]
             ov_index = list(parent).index(opposite_vertex)
             if dim == 0:
-                if self.complex_dimension() == 2:
+                if self.complex_dimension() == 1:
+                    sgn = signs[dim]
+                elif self.complex_dimension() == 2:
                     sgn = signs[dim + 1]
                 elif self.complex_dimension() == 3:
                     sgn = signs[dim + 1] * signs[dim + 2]
