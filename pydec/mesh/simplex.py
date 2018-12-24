@@ -1,7 +1,7 @@
 __all__ = ['Simplex','SimplicialMesh','simplex','simplicial_mesh']
 
 from pydec.math import signed_volume,relative_parity,combinations
-from base_mesh import base_mesh
+from .base_mesh import base_mesh
 
 
 from scipy import asarray
@@ -62,7 +62,7 @@ class simplicial_mesh(base_mesh):
         elif len(args) == 1 and isinstance(args[0],dict):
             base_mesh.update(self,args[0])
         else:
-            raise ValueError,'unrecognized arguments'
+            raise ValueError('unrecognized arguments')
 
         if numpy.rank(self['elements']) != 2 or numpy.rank(self['vertices']) != 2:
             raise ValueError('index and vertex arrays must have rank 2')
@@ -168,7 +168,7 @@ class simplicial_mesh(base_mesh):
                     temp = row[0]
                     row[0] = row[1]
                     row[1] = temp
-            print "Flipped",num_flips,"simplices"
+            print("Flipped", num_flips,"simplices")
             return
 
         raise NotImplementedError
@@ -188,7 +188,7 @@ class simplicial_mesh(base_mesh):
             for b in simplex.boundary():
                 simplex_neigbors[index].append(face_to_simplex[b] - set([index]))
         
-        print simplex_neighbors
+        print(simplex_neighbors)
                 
 
 #for backwards compatibility

@@ -49,14 +49,14 @@ def read_array(fid):
                 coo_matrix
     """
 
-    if type(fid) is not file:  fid = open(fid)
+    if not hasattr(fid, "read"):  fid = open(fid, "rb")
     
     header = read_header(fid)
     
     try: format = header['format']
     except: raise FileFormatError('File format unspecified in file')
-    if format not in ['','basic','ascii','binary']: raise FileFormatError('Unknown format: ['+format+']')    
-    
+    if format not in ['', 'basic', 'ascii', 'binary']: 
+        raise FileFormatError('Unknown format: [' + format + ']')    
     
     if format == 'basic':
         return read_basic(fid,header)
@@ -69,9 +69,9 @@ def read_array(fid):
         if array_type == 'ndarray':
             return read_ndarray(fid,header)    
         elif array_type == 'sparse':
-            return read_sparse(fid,header)
+            return read_sparse(fid, header)
         else:
-            raise FileFormatError('Unknown array type: ['+array_type+']')
+            raise FileFormatError('Unknown array type: [' + array_type + ']')
     
 
 
@@ -94,9 +94,10 @@ def write_array(fid,A,format='binary'):
             - Data stored in LittleEndian
     """   
         
-    if format not in ['basic','ascii','binary']: raise ArrayIOException('Unknown format: ['+format+']')
+    if format not in ['basic', 'ascii', 'binary']: 
+        raise ArrayIOException('Unknown format: ['+format+']')
    
-    if type(fid) is not file: fid = open(fid,'wb')
+    if not hasattr(fid, "read"): fid = open(fid,'wb')
     
     if type(A) is numpy.ndarray:
         A = numpy.ascontiguousarray(A)  #strided arrays break in write
@@ -106,7 +107,8 @@ def write_array(fid,A,format='binary'):
         else:            
             write_ndarray(fid,A,format)
     elif scipy.sparse.isspmatrix(A):
-        if format not in ['ascii','binary']: raise ArrayIOException('sparse matrices require ascii or binary format')
+        if format not in ['ascii', 'binary']: 
+            raise ArrayIOException('sparse matrices require ascii or binary format')
         write_sparse(fid,A,format)
     else:
         try:
@@ -124,20 +126,21 @@ def read_header(fid):
     """
     Read the header of an array file into a dictionary
     """
-    if type(fid) is not file: fid = open(fid)
+    if not hasattr(fid, "read"): fid = open(fid, 'rb')
     
-    first_line = fid.readline()
+    first_line = fid.readline().decode()
     try:    numlines = int(first_line)
     except: 
-        print 'firstline error: '+first_line
+        print('firstline error: ' + first_line)
         raise ArrayIOException()
     
     #numlines = int(fid.readline())
     header = ArrayHeader()
     for i in range(numlines):
-        line = fid.readline().rstrip()
+        line = fid.readline().decode().rstrip()
         parts = line.split('=')
-        if len(parts) != 2: raise FileFormatError('File header error: line #'+str(i)+' ['+line+']')
+        if len(parts) != 2: 
+            raise FileFormatError('File header error: line #' + str(i) + ' [' + line + ']')
         header[parts[0]] = parts[1]
     return header
     
@@ -146,12 +149,12 @@ def read_header(fid):
 #---basic---#000000#FFFFFF------------------------------------------------------
 def basic_header(A):
     header = ArrayHeader()   
-    header['dims'] = ','.join(map(str,A.shape))
+    header['dims'] = ','.join(list(map(str, A.shape)))
     header['dtype'] = A.dtype.name
     return header
 
 def read_basic(fid,header):
-    try:    dimensions = map(int,header['dims'].split(','))
+    try:    dimensions = split_on_comma(header['dims'])
     except: raise FileFormatError('Unable to determine dims')
 
     try: dtype = numpy.typeDict[header['dtype']]
@@ -186,7 +189,7 @@ def read_ndarray(fid,header):
     try:    rank = int(header['rank'])
     except: raise FileFormatError('Unable to determine rank')
     
-    try:    dims = map(int,header['dims'].split(','))
+    try:    dims = split_on_comma(header['dims'])
     except: raise FileFormatError('Unable to determine dims')
 
     try:    dtype = numpy.typeDict[header['dtype']]
@@ -195,8 +198,8 @@ def read_ndarray(fid,header):
     try:    format = header['format']
     except: raise FileFormatError('Unable to determine format')
         
-    if len(dims) != rank or min(dims) < 0: raise FileFormatError('Invalid dims')
-    
+    if len(dims) != rank or min(dims) < 0: 
+        raise FileFormatError('Invalid dims')
     
     if format == 'ascii': sep = ' '
     else: sep = ''
@@ -238,7 +241,7 @@ def sparse_header(A):
     return header
     
 def read_sparse(fid,header):    
-    try:    dims = map(int,header['dims'].split(','))
+    try:    dims = split_on_comma(header['dims'])
     except: raise FileFormatError('Unable to determine dims')
 
     try:    format = header['sptype']
@@ -246,18 +249,19 @@ def read_sparse(fid,header):
         
     if len(dims) != 2 or min(dims) < 1: raise FileFormatError('Invalid dims')
     
-    if header['sptype'] not in supported_sparse_formats:  raise ArrayIOException('Only '+str(supported_sparse_formats)+' are supported')
+    if header['sptype'] not in supported_sparse_formats:  
+        raise ArrayIOException('Only ' + str(supported_sparse_formats) + ' are supported')
     
     if header['sptype'] == 'csr':
         data   = read_array(fid)
         colind = read_array(fid)
         indptr = read_array(fid)
-        return scipy.sparse.csr_matrix((data,colind,indptr),dims)
+        return scipy.sparse.csr_matrix((data, colind, indptr), dims)
     elif header['sptype'] == 'csc':
         data   = read_array(fid)
         rowind = read_array(fid)
         indptr = read_array(fid)
-        return scipy.sparse.csc_matrix((data,rowind,indptr),dims)
+        return scipy.sparse.csc_matrix((data, rowind, indptr), dims)
     elif header['sptype'] == 'coo':
         data = read_array(fid)
         row  = read_array(fid)
@@ -266,26 +270,29 @@ def read_sparse(fid,header):
 
         
 def write_sparse(fid,A,format):
-    if A.format not in supported_sparse_formats: raise ArrayIOException('Only '+str(supported_sparse_formats)+' are supported')
+    if A.format not in supported_sparse_formats: 
+        raise ArrayIOException('Only ' + str(supported_sparse_formats) + ' are supported')
     
     header = sparse_header(A)
     header['format'] = format
     fid.write(header.tostring())
     
     if A.format == 'csr':
-        write_array(fid,A.data,format)
-        write_array(fid,A.indices,format)
-        write_array(fid,A.indptr,format)
+        write_array(fid, A.data, format)
+        write_array(fid, A.indices, format)
+        write_array(fid, A.indptr, format)
     elif A.format == 'csc':
-        write_array(fid,A.data,format)
-        write_array(fid,A.indices,format)
-        write_array(fid,A.indptr,format)
+        write_array(fid, A.data,format)
+        write_array(fid, A.indices,format)
+        write_array(fid, A.indptr,format)
     elif A.format == 'coo':
-        write_array(fid,A.data,format)
-        write_array(fid,A.row,format)
-        write_array(fid,A.col,format)
+        write_array(fid, A.data, format)
+        write_array(fid, A.row, format)
+        write_array(fid, A.col, format)
     else:
         assert(false)
 
-        
+#------Helper functions-------------------------------------------------------------------------
+def split_on_comma(to_parse):
+    return list(map(int, to_parse.split(',')))
     

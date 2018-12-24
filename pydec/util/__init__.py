@@ -1,8 +1,8 @@
 "General utility functions"
 
-from info import __doc__
+from .info import __doc__
 
-from util import *
+from .util import *
 
-__all__ = filter(lambda s:not s.startswith('_'),dir())
+__all__ = list(filter(lambda s:not s.startswith('_'),dir()))
 

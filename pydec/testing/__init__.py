@@ -1,1 +1,3 @@
-from numpy.testing import *
+from numpy.testing import Tester
+
+from numpy.testing import TestCase

@@ -95,7 +95,7 @@ def permutation_parity(perm, check_input=True):
     # count the number of cycles to determine the parity
     num_cycles = 0
     seen = set()
-    for i in xrange(n):
+    for i in range(n):
         if i in seen:
             continue
         num_cycles += 1

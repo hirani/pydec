@@ -4,7 +4,7 @@ from scipy import rank,ones
 import scipy
 
 from pydec.mesh import regular_cube_mesh
-from cube_array import cube_array_boundary
+from .cube_array import cube_array_boundary
 
 class regular_cube_complex(list):
     """
@@ -15,7 +15,7 @@ class regular_cube_complex(list):
 
     def __init__(self,mesh):
         if not isinstance(mesh,regular_cube_mesh):
-            raise ValueError,'expected a regular_cube_mesh'
+            raise ValueError('expected a regular_cube_mesh')
 
         self.mesh = mesh
 
