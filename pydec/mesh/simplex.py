@@ -64,7 +64,7 @@ class simplicial_mesh(base_mesh):
         else:
             raise ValueError('unrecognized arguments')
 
-        if numpy.rank(self['elements']) != 2 or numpy.rank(self['vertices']) != 2:
+        if numpy.ndim(self['elements']) != 2 or numpy.ndim(self['vertices']) != 2:
             raise ValueError('index and vertex arrays must have rank 2')
 
         if self['elements'].min() < 0 or self['elements'].max() > self['vertices'].shape[0]:
