@@ -18,7 +18,7 @@ class ArrayHeader(dict):
     def tostring(self):        
         self['version'] = '1.0'
         output = str(len(self)) + '\n'
-        for key,value in self.iteritems():
+        for key,value in self.items():
             output += key
             output += '='
             output += str(value)
@@ -169,10 +169,10 @@ def write_basic(fid,A):
     A = numpy.atleast_2d(A) #force 1d arrays to 2d
     header = basic_header(A)
     header['format'] = 'basic'
-    fid.write(header.tostring())
+    fid.write(header.tostring().encode('utf-8'))
     for row in A:
         row.tofile(fid,sep=' ',format='%.16g')
-        fid.write('\n')
+        fid.write(b'\n')
     
 
     

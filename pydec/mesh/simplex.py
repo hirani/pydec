@@ -10,7 +10,7 @@ import numpy,scipy
 
 class simplex(tuple):
     def __new__(cls,s,parity=0):
-        obj = tuple.__new__(cls,sorted(s))
+        obj = tuple.__new__(cls, sorted(s))
         obj.parity =  relative_parity(obj,s) ^ parity
         return obj
     
@@ -21,7 +21,7 @@ class simplex(tuple):
         """
         A list of oriented simplicies in the boundary of this simplex
         """
-        return [ simplex(self[:n] + self[n+1:],(self.parity + n) % 2) for n in range(len(self)) ]
+        return [ simplex(self[:n] + self[n+1:], (self.parity + n) % 2) for n in range(len(self)) ]
 
 
 
@@ -71,13 +71,13 @@ class simplicial_mesh(base_mesh):
             raise ValueError('invalid index value')
             
 
-    def __getattr__(self,attr):
+    def __getattr__(self, attr):
         if attr == 'vertices':
             return self['vertices']
-        elif attr in ['indices','elements']:        
+        elif attr in ['indices', 'elements']:        
             return self['elements']
-        else:
-            return base_mesh.__getattr__(self,attr)
+
+        return base_mesh.__getattr__(self, attr)
 
     def __setattr__(self,attr,value):
         if attr == 'vertices':
@@ -86,8 +86,6 @@ class simplicial_mesh(base_mesh):
             self['elements'] = value
         else:
             return base_mesh.__setattr__(self,attr,value)
-
-
 
     def __repr__(self):
         output = ""

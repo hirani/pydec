@@ -97,8 +97,7 @@ def write_mesh(fid, mesh, format='binary'):
     
     mesh_node = xmldoc.appendChild(xmldoc.createElement('mesh'))
     mesh_node.setAttribute('type', mesh_type_to_str[type(mesh)])
-    
-    for key,value in mesh.iteritems():
+    for key,value in mesh.items():
         data_filename = basename + '.' + key
         
         data_node      = mesh_node.appendChild(xmldoc.createElement(key))
