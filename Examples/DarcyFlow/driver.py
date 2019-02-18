@@ -64,7 +64,7 @@ pressures = zeros(N2)
 b = b - A * concatenate((all_fluxes,pressures))
 # Remove entries of b corresponding to boundary fluxes and known pressure
 # Pressure at the right most triangle circumcenter is assumed known
-pressure_indices = range(N1, N1+N2)
+pressure_indices = list(range(N1, N1+N2))
 pressure_indices.remove(N1 + argmax(sc[2].circumcenter[:,0]))
 entries_to_keep = concatenate((internal_indices, pressure_indices))
 b = b[entries_to_keep]
@@ -78,7 +78,6 @@ figure(); ax = gca();
 ax.set_xlabel('x', fontsize=20)
 ax.set_ylabel('Pressure', fontsize=20)
 ax.plot(sc[2].circumcenter[:,0], pressures, 'ro', markersize=8, mec='r')
-ax.hold(True)
 # Draw a line of slope -1 through the known presure point
 xmax = max(sc[2].circumcenter[:,0])
 xmin = min(sc[2].circumcenter[:,0])
@@ -87,7 +86,6 @@ ax.legend(['DEC', 'Analytical'], numpoints=1)
 # Plot the triangles
 figure(); ax = gca()
 ax.triplot(vertices[:,0], vertices[:,1], triangles)
-ax.hold('on')
 # Insert the computed fluxes into vector of all fluxes
 all_fluxes[internal_indices] = fluxes
 # Whitney interpolate flux and sample at barycenters. Then

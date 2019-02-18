@@ -4,6 +4,7 @@ from pydec.mesh import simplicial_mesh
 import pydec.io.arrayio
 #from xml.dom.ext import PrettyPrint
 from xml.dom import minidom
+from io import IOBase
 
 import os
 
@@ -45,7 +46,7 @@ def read_mesh(fid):
       my_mesh = read_mesh(fid)
     
     """
-    if type(fid) is not file: fid = open(fid)
+    if not hasattr(fid, "read"): fid = open(fid)
         
     xmldoc = minidom.parse(fid)
 
@@ -55,11 +56,11 @@ def read_mesh(fid):
         raise PyMeshIOException('Invalid XML root node')
 
 
-    (filepath,filename) = os.path.split(fid.name)   
+    (filepath, filename) = os.path.split(fid.name)   
 
     children = [child for child in xmldoc.firstChild.childNodes if child.nodeType == child.ELEMENT_NODE]
     
-    array_dict = read_arrays(children,filepath)
+    array_dict = read_arrays(children, filepath)
 
     if mesh_node.hasAttribute('type'):
         mesh_str = str(mesh_node.attributes['type'].value)
@@ -71,7 +72,7 @@ def read_mesh(fid):
     return mesh_type(array_dict)
 
 
-def write_mesh(fid,mesh,format='binary'):
+def write_mesh(fid, mesh, format='binary'):
     """
     Write a mesh to a given file or filename.
 
@@ -86,18 +87,17 @@ def write_mesh(fid,mesh,format='binary'):
        
     """
     
-    if type(fid) is not file: fid = open(fid,'w')
+    if not hasattr(fid, "read"): fid = open(fid, 'w')
     
-    (filepath,filename) = os.path.split(fid.name)
+    (filepath, filename) = os.path.split(fid.name)
     basename = filename.split('.')[0]
     
     
     xmldoc = minidom.Document()
     
     mesh_node = xmldoc.appendChild(xmldoc.createElement('mesh'))
-    mesh_node.setAttribute('type',mesh_type_to_str[type(mesh)])
-    
-    for key,value in mesh.iteritems():
+    mesh_node.setAttribute('type', mesh_type_to_str[type(mesh)])
+    for key,value in mesh.items():
         data_filename = basename + '.' + key
         
         data_node      = mesh_node.appendChild(xmldoc.createElement(key))

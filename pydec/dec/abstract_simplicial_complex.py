@@ -1,7 +1,7 @@
 from numpy import zeros, ones, arange, array, asarray, hstack, vstack, empty, lexsort, atleast_2d, alltrue
 from scipy import sparse
 
-from simplex_array import simplex_array_parity, simplex_array_boundary, simplex_array_searchsorted
+from .simplex_array import simplex_array_parity, simplex_array_boundary, simplex_array_searchsorted
 
 __all__ = ['abstract_simplicial_complex']
 

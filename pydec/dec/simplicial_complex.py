@@ -11,8 +11,8 @@ import pydec
 from pydec.mesh.simplex import simplex, simplicial_mesh
 from pydec.math import circumcenter, unsigned_volume, signed_volume
 
-from simplex_array import simplex_array_parity, simplex_array_boundary
-from cochain import cochain
+from .simplex_array import simplex_array_parity, simplex_array_boundary
+from .cochain import cochain
 
 
 class simplicial_complex(list):
@@ -308,14 +308,15 @@ class simplicial_complex(list):
         """Return a list of the boundary simplices, i.e. the faces of the top level simplices that occur only once
         """
     
-        assert(self.complex_dimension() > 0)        
-        face_count = dict.fromkeys(self[self.complex_dimension() - 1].simplex_to_index.iterkeys(),0)
+        assert(self.complex_dimension() > 0) 
+        old_keys = self[self.complex_dimension() - 1].simplex_to_index.keys()
+        face_count = dict.fromkeys(old_keys, 0)
         
-        for s in self[self.complex_dimension()].simplex_to_index.iterkeys():
+        for s in self[self.complex_dimension()].simplex_to_index.keys():
             for f in s.boundary():
                 face_count[f] += 1
         
-        boundary_faces = [f for f,count in face_count.iteritems() if count == 1]        
+        boundary_faces = [f for f, count in face_count.items() if count == 1]
         return boundary_faces
         
 
@@ -341,19 +342,14 @@ class simplicial_complex(list):
                 self.complex.compute_dual_volume()
                 return self.dual_volume
             elif attr == "simplex_to_index":
-                self.simplex_to_index = dict(zip([simplex(x) for x in self.simplices],xrange(len(self.simplices))))
+                self.simplex_to_index = dict((simplex(x), i) for i, x in enumerate(self.simplices))
                 return self.simplex_to_index
             elif attr == "index_to_simplex":
-                self.simplex_to_index = dict(zip(xrange(len(self.simplices)),[simplex(x) for x in self.simplices]))
+                self.simplex_to_index = dict((i, simplex(x)) for i, x in enumerate(self.simplices))
                 return self.simplex_to_index
             else:
-                raise AttributeError, attr + " not found"
+                raise AttributeError(attr + " not found")
     
 
 #for backwards compatibility
 SimplicialComplex = simplicial_complex
-    
-
-
-
-

@@ -41,9 +41,9 @@ def combinations(L, n):
     if n==0 or n > len(L): 
         yield []
     else:
-        for i in xrange(len(L)-n+1):
-            for t in combinations(L[i+1:],n-1):
-                yield [L[i]]+t
+        for i in range(len(L)-n+1):
+            for t in combinations(L[i+1:], n-1):
+                yield [L[i]] + t
         
 def permutations(L):
     """Generate permutations from a sequence of elements.

@@ -62,7 +62,7 @@ def triangulate_ncube(vertices,indices):
 
 
     if n_dims > 2:
-        raise NotImplementedError,'nCube meshes with n > 2 not supported'
+        raise NotImplementedError('nCube meshes with n > 2 not supported')
 
     cell_centers = vertices[indices.reshape(n_cubes,-1)].mean(axis=1)
 

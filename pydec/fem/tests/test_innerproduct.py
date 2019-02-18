@@ -1,7 +1,8 @@
 from pydec.testing import *
 
 from scipy import array,array,sparse,zeros,ones,eye,allclose,alltrue, \
-                isreal,real,dot,concatenate,factorial,comb,sqrt,shape,ix_
+                isreal,real,dot,concatenate,sqrt,shape,ix_
+from scipy.special import factorial, comb
 from scipy.linalg import eigvals,inv,det
 
 from pydec.dec import simplicial_complex, regular_cube_complex

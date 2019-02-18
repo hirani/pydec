@@ -23,11 +23,12 @@ def cube_array_search(k_face_array,k_faces):
       array([2,1])
 
     """
-    if ndim(k_face_array) != 2 or ndim(k_faces) != 2:
-        raise ValueError,'expected rank 2 arrays'
 
+    if ndim(k_face_array) != 2 or ndim(k_faces) != 2:
+        raise ValueError('expected rank 2 arrays')
+        
     if k_face_array.shape[1] != k_faces.shape[1]:
-        raise ValueError,'number of columns must agree'
+        raise ValueError('number of columns must agree')
 
     # a dense array used to lookup k_face_array row indices 
     lookup_grid_dimensions = k_face_array.max(axis=0) + 1

@@ -5,7 +5,7 @@ from pydec.mesh.simplex import simplex
 from pydec.math import kd_tree
 from pydec.util import flatten
 
-from simplex_array import simplex_array_searchsorted
+from .simplex_array import simplex_array_searchsorted
 
 __all__ = ['rips_complex']
 

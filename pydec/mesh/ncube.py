@@ -1,9 +1,8 @@
 __all__ = ['nCube','nCubeMesh','RegularCubeMesh']
 
+
 from numpy import ndarray,array,asarray,ndim,bitwise_xor,eye,hstack,vstack,arange,zeros
-from simplex import Simplex
-
-
+from .simplex import Simplex
 
 
 class RegularCubeMesh:
@@ -35,7 +34,8 @@ class RegularCubeMesh:
         Return a cube array that represents this mesh's bitmap
         """
         cubes = vstack(self.bitmap.nonzero()).transpose()
-        cubes = hstack((cubes,zeros((cubes.shape[0],ndim(self.bitmap)),dtype=cubes.dtype) + arange(ndim(self.bitmap))))
+        applied_zeroes = zeros((cubes.shape[0], ndim(self.bitmap)), dtype=cubes.dtype)
+        cubes = hstack((cubes, applied_zeroes + arange(ndim(self.bitmap))))
 
         return cubes
     
@@ -98,7 +98,7 @@ class nCube:
              True if opposite orientation
         """
         if self.corner_simplex != other.corner_simplex:
-            raise ValueError,'Cubes do not share the same vertices'
+            raise ValueError('Cubes do not share the same vertices')
         return self.corner_simplex.parity ^ other.corner_simplex.parity
 
 

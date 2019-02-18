@@ -27,7 +27,7 @@ alpha = lsqr(B1.T, omega)[0] # solve least squares problem
 # Set the minimum to 0
 alpha = alpha - alpha.min()
 
-print alpha
+print(alpha)
 
 
 

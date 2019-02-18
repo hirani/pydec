@@ -111,7 +111,8 @@ def simplex_array_boundary(s,parity):
     faces = faces[lexsort( faces[:,:-2].T[::-1] )]
 
     #find unique faces
-    face_mask    = ~hstack((array([False]),alltrue(faces[1:,:-2] == faces[:-1,:-2],axis=1)))
+    face_mask    = ~hstack((array([False]), alltrue(faces[1:,:-2] == faces[:-1,:-2], axis=1)))
+
     unique_faces = faces[face_mask,:-2]
 
     #compute CSR representation for boundary operator

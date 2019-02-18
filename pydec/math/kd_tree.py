@@ -60,15 +60,15 @@ class kd_tree:
         
         self.root = self.__build(zip(points,values),depth=0)
 
-    def __build(self,pv_pairs,depth):
+    def __build(self, pv_pairs, depth):
         if not pv_pairs:
             return None
         
         axis = depth % self.k #cycle axis
         
-        pv_pairs.sort(key=lambda x: x[0][axis])
+        pv_pairs = sorted(pv_pairs, key=lambda x: x[0][axis])
         
-        mid = len(pv_pairs) / 2
+        mid = len(pv_pairs) // 2
 
         node = self.node()
         node.axis  = axis
