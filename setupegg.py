@@ -4,4 +4,4 @@ A setup.py script to use setuptools, which gives egg goodness, etc.
 """
 
 from setuptools import setup
-execfile('setup.py')
+exec(open('setup.py').read())
