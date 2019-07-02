@@ -64,7 +64,7 @@ def setup_package():
             url = "http://www.graphics.cs.uiuc.edu/~wnbell/",
             download_url = "http://code.google.com/p/pydec/downloads/list",
             license = 'BSD',
-            classifiers=filter(None, CLASSIFIERS.split('\n')),
+            classifiers=list(filter(None, CLASSIFIERS.split('\n'))),
             platforms = ["Windows", "Linux", "Solaris", "Mac OS-X", "Unix"],
             configuration=configuration )
     finally:
