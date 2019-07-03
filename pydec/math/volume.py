@@ -1,7 +1,7 @@
 __all__ = ['unsigned_volume','signed_volume']
 
 from scipy import sqrt,inner,shape,asarray
-from scipy.misc import factorial
+from scipy.special import factorial
 from scipy.linalg import det
 
 
