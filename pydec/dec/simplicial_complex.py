@@ -241,24 +241,13 @@ class simplicial_complex(list):
                                        temp_signs,
                                        self.complex_dimension())
             
-    ## def __compute_dual_volume(self,s,pts,dim):        
-    ##     data = self[dim]
-    ##     index = data.simplex_to_index[s]        
-    ##     pts[dim] = data.circumcenter[index]
-    ##     data.dual_volume[index] += unsigned_volume(pts[dim:,:])
-    ##     if dim > 0:
-    ##         for bs in s.boundary():
-    ##             self.__compute_dual_volume(bs,pts,dim-1)
-
     def __compute_dual_volume(self, s, parent, pts, bpts, signs, dim):    
-        ## NOTE: This works only for 2- and 3-dimensional complexes
-        ##       embedded respectively in 2- and 3-dimensional spaces
-        
-        ## s: simplex whose dual volume is desired
-        ## parent: simplex initiating this call whose face is s
-        ## pts: circumcenters at all dimensions
+        ## s: simplex whose dual volume is desired (NumPy array)
+        ## parent: simplex initiating this call whose face is s (NumPy
+        ## array) 
+        ## pts: circumcenters at all dimensions (NumPy array)
         ## bpts: circumcenters at all dimensions in barycentric 
-        ## coordinates (as Python list)
+        ## coordinates (Python list)
 
         ## Remark: Sign s is determined by location of cicumcenter
         ## with respect to a face of a simplex and the opposite vertex
@@ -274,50 +263,14 @@ class simplicial_complex(list):
         index = data.simplex_to_index[s]  
         pts[dim] = data.circumcenter[index]
         bpts[dim] = data.bary_circumcenter[index]
+        sgn = signs[0]
         if parent is not None:
             opposite_vertex = list(set(parent) - set(s))[0]
             ov_index = list(parent).index(opposite_vertex)
-            if dim == 0:
-                if self.complex_dimension() == 1:
-                    sgn = signs[dim]
-                elif self.complex_dimension() == 2:
-                    sgn = signs[dim + 1]
-                elif self.complex_dimension() == 3:
-                    sgn = signs[dim + 1] * signs[dim + 2]
-                else:
-                    # Embedding in greater than 3-dimensions not
-                    # implemented
-                    raise NotImplementedError
-                data.dual_volume[index] += (
-                    sgn * unsigned_volume(pts[dim:,:]))
-            elif dim == 1:
-                signs[dim] = sign(bpts[-1][ov_index])
-                if self.complex_dimension() == 2:
-                    data.dual_volume[index] += (
-                        signs[dim] * unsigned_volume(pts[dim:,:]))
-                elif self.complex_dimension() == 3:
-                    data.dual_volume[index] += (
-                        signs[dim] * signs[dim + 1] *
-                        unsigned_volume(pts[dim:,:]))
-                else:
-                    # Embedding in greater than 3-dimensions not
-                    # implemented                    
-                    raise NotImplementedError
-            elif dim == 2:
-                signs[dim] = sign(bpts[-1][ov_index])
-                if self.complex_dimension() == 3:
-                    data.dual_volume[index] += (
-                        signs[dim] * unsigned_volume(pts[dim:,:]))
-                else:
-                    # Embedding in greater than 3-dimensions not
-                    # implemented                    
-                    raise NotImplementedError
-            else:
-                # Signed duals not implemented for simplicial
-                # complexes which are not 2- or 3-dimensional
-                raise NotImplementedError
-        else:
-            data.dual_volume[index] += unsigned_volume(pts[dim:,:])
+            signs[dim] = sign(bpts[-1][ov_index])
+        for i in range(dim, self.complex_dimension()):
+            sgn *= signs[i]
+        data.dual_volume[index] += sgn * unsigned_volume(pts[dim:,:])
         if dim > 0:
             for bs in s.boundary():
                 self.__compute_dual_volume(bs, s, pts, bpts, signs, dim-1)
