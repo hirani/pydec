@@ -4,7 +4,7 @@ from warnings import warn
 
 import numpy
 import scipy
-from numpy import sign, array, dot, inner, ones, cross
+from numpy import array, dot, inner, ones, cross, copysign
 from scipy import sparse, zeros, asarray, mat, hstack
 
 import pydec
@@ -263,11 +263,11 @@ class simplicial_complex(list):
         index = data.simplex_to_index[s]  
         pts[dim] = data.circumcenter[index]
         bpts[dim] = data.bary_circumcenter[index]
-        sgn = signs[0]
+        sgn = 1
         if parent is not None:
             opposite_vertex = list(set(parent) - set(s))[0]
             ov_index = list(parent).index(opposite_vertex)
-            signs[dim] = sign(bpts[-1][ov_index])
+            signs[dim] = copysign(1, bpts[-1][ov_index])
         for i in range(dim, self.complex_dimension()):
             sgn *= signs[i]
         data.dual_volume[index] += sgn * unsigned_volume(pts[dim:,:])
