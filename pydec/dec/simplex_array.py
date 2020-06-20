@@ -2,7 +2,7 @@ __all__ = ['simplex_array_searchsorted','simplex_array_boundary','simplex_array_
 
 
 from scipy import ravel, zeros, ones, arange, empty, alltrue, array, lexsort, \
-    hstack, vstack, rank, bincount, cumsum, ascontiguousarray, zeros_like, \
+    hstack, vstack, ndim, bincount, cumsum, ascontiguousarray, zeros_like, \
     concatenate, asarray
 from scipy.sparse import csr_matrix
 
@@ -25,7 +25,7 @@ def simplex_array_searchsorted(s, v):
     s = asarray(s)
     v = asarray(v)
 
-    if rank(s) != 2 or rank(v) != 2:
+    if ndim(s) != 2 or ndim(v) != 2:
         raise ValueError('expected rank 2 arrays')
 
     if s.shape[1] != v.shape[1]:
@@ -111,7 +111,8 @@ def simplex_array_boundary(s,parity):
     faces = faces[lexsort( faces[:,:-2].T[::-1] )]
 
     #find unique faces
-    face_mask    = -hstack((array([False]),alltrue(faces[1:,:-2] == faces[:-1,:-2],axis=1)))
+    face_mask    = ~hstack((array([False]), alltrue(faces[1:,:-2] == faces[:-1,:-2], axis=1)))
+
     unique_faces = faces[face_mask,:-2]
 
     #compute CSR representation for boundary operator
@@ -154,7 +155,7 @@ def simplex_array_boundary(s,parity):
 #
 #    """
 #
-#    if rank(s) != 2 or rank(v) != 2:
+#    if ndim(s) != 2 or ndim(v) != 2:
 #        raise ValueError,'expected rank 2 arrays'
 #
 #    if s.shape[1] != v.shape[1]:

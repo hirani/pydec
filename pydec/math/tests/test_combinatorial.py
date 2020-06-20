@@ -1,6 +1,6 @@
 from pydec.testing import *
 
-from scipy.misc import factorial, comb
+from scipy.special import factorial, comb
 
 from pydec.math.combinatorial import combinations, permutations
 

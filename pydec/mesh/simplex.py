@@ -1,7 +1,7 @@
 __all__ = ['Simplex','SimplicialMesh','simplex','simplicial_mesh']
 
 from pydec.math import signed_volume,relative_parity,combinations
-from base_mesh import base_mesh
+from .base_mesh import base_mesh
 
 
 from scipy import asarray
@@ -10,7 +10,7 @@ import numpy,scipy
 
 class simplex(tuple):
     def __new__(cls,s,parity=0):
-        obj = tuple.__new__(cls,sorted(s))
+        obj = tuple.__new__(cls, sorted(s))
         obj.parity =  relative_parity(obj,s) ^ parity
         return obj
     
@@ -21,7 +21,7 @@ class simplex(tuple):
         """
         A list of oriented simplicies in the boundary of this simplex
         """
-        return [ simplex(self[:n] + self[n+1:],(self.parity + n) % 2) for n in range(len(self)) ]
+        return [ simplex(self[:n] + self[n+1:], (self.parity + n) % 2) for n in range(len(self)) ]
 
 
 
@@ -62,22 +62,22 @@ class simplicial_mesh(base_mesh):
         elif len(args) == 1 and isinstance(args[0],dict):
             base_mesh.update(self,args[0])
         else:
-            raise ValueError,'unrecognized arguments'
+            raise ValueError('unrecognized arguments')
 
-        if numpy.rank(self['elements']) != 2 or numpy.rank(self['vertices']) != 2:
+        if numpy.ndim(self['elements']) != 2 or numpy.ndim(self['vertices']) != 2:
             raise ValueError('index and vertex arrays must have rank 2')
 
         if self['elements'].min() < 0 or self['elements'].max() > self['vertices'].shape[0]:
             raise ValueError('invalid index value')
             
 
-    def __getattr__(self,attr):
+    def __getattr__(self, attr):
         if attr == 'vertices':
             return self['vertices']
-        elif attr in ['indices','elements']:        
+        elif attr in ['indices', 'elements']:        
             return self['elements']
-        else:
-            return base_mesh.__getattr__(self,attr)
+
+        return base_mesh.__getattr__(self, attr)
 
     def __setattr__(self,attr,value):
         if attr == 'vertices':
@@ -86,8 +86,6 @@ class simplicial_mesh(base_mesh):
             self['elements'] = value
         else:
             return base_mesh.__setattr__(self,attr,value)
-
-
 
     def __repr__(self):
         output = ""
@@ -168,7 +166,7 @@ class simplicial_mesh(base_mesh):
                     temp = row[0]
                     row[0] = row[1]
                     row[1] = temp
-            print "Flipped",num_flips,"simplices"
+            print("Flipped", num_flips,"simplices")
             return
 
         raise NotImplementedError
@@ -188,7 +186,7 @@ class simplicial_mesh(base_mesh):
             for b in simplex.boundary():
                 simplex_neigbors[index].append(face_to_simplex[b] - set([index]))
         
-        print simplex_neighbors
+        print(simplex_neighbors)
                 
 
 #for backwards compatibility

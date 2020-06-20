@@ -43,7 +43,7 @@ NUM_EIGS = 50 # Number of eigenvalues to plot
 values = sorted([x for x in real(eigenvalues) if x > 1e-10])[0:NUM_EIGS]
 ax = figure().gca()
 ax.set_title('First ' + str(len(values)) + ' Eigenvalues\n\n')
-ax.hold(True)
+# ax.hold(True)
 ax.plot(values,'ko')
 
 # Plot the eigenvector 1-cochain as a vector field

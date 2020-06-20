@@ -6,7 +6,7 @@ from scipy import matrix,sparse,zeros,ones,eye,allclose,alltrue, \
                 arange,array,inner,vstack,atleast_2d,empty,tile, \
                 asarray,all,sum,hstack
 
-from scipy.misc import factorial, comb
+from scipy.special import factorial, comb
 from scipy.linalg import det,inv
 from scipy.sparse import coo_matrix
               

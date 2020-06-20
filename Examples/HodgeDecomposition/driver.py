@@ -67,7 +67,7 @@ def ortho(A):
 
     return A
 
-seed(0) # make results consistent
+seed(1) # make results consistent
 
 # Read in mesh data from file
 mesh = read_mesh('mesh_example.xml')
