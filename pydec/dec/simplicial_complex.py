@@ -320,8 +320,8 @@ class simplicial_complex(list):
                 self.simplex_to_index = dict((simplex(x), i) for i, x in enumerate(self.simplices))
                 return self.simplex_to_index
             elif attr == "index_to_simplex":
-                self.simplex_to_index = dict((i, simplex(x)) for i, x in enumerate(self.simplices))
-                return self.simplex_to_index
+                self.index_to_simplex = dict((i, simplex(x)) for i, x in enumerate(self.simplices))
+                return self.index_to_simplex
             else:
                 raise AttributeError(attr + " not found")
     

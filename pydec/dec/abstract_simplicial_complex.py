@@ -71,7 +71,7 @@ class abstract_simplicial_complex:
                 s = s[lexsort(s.T[::-1])]
 
                 # find unique simplices
-                mask = -hstack((array([False]),alltrue(s[1:] == s[:-1],axis=1)))
+                mask = ~hstack((array([False]),alltrue(s[1:] == s[:-1],axis=1)))
                 s = s[mask]
 
                 # indices of the boundary faces in the full face array
