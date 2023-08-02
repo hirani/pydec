@@ -7,4 +7,4 @@
 *.swp
 dist
 build
-__svn_version__.py
+*.egg-info
