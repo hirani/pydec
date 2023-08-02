@@ -14,5 +14,6 @@ from .vis import *
 __all__ = list(filter(lambda s:not s.startswith('_'),dir()))
 __all__ += ['test', '__version__']
 
-from pydec.testing import Tester
-test = Tester().test
+# TODO: replace testing framework with pytest (?) since Tester of nose/numpy is deprecated
+#from pydec.testing import Tester
+#test = Tester().test

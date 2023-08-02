@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "pydec"
+#dynamic = ["version"]
+version = "1.1.0"
+description = "PyDEC: A Python Library for Discretizations of Exterior Calculus."
+#readme = {file = "README.rst", content-type = "text/x-rst"}
+authors = [
+    { name="Nathan Bell", email="wnbell@gmail.com" },
+    { name="Anil N. Hirani", email="anil.hirani@icloud.com" }
+]
+maintainers = [
+    { name="Anil N. Hirani", email="anil.hirani@icloud.com" },
+    { name="Kaushik Kalyanaraman", email="kaushik@iiitd.ac.in" }
+]
+requires-python = ">=3.9"
+keywords = ["DEC", "FEEC", "exterior calculus"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Topic :: Scientific/Engineering :: Mathematics"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/hirani/pydec"
+"Bug Tracker" = "https://github.com/hirani/pydec/issues"
+
+#[tool.setuptools.dynamic]
+#version = {attr = "pydec.__version__"}
+
+#[tool.setuptools]
+#include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["pydec"]
