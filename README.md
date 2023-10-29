@@ -3,7 +3,7 @@
 PyDEC is a Python library implementing Discrete Exterior Calculus (DEC) and lowest order finite element exterior calculus (FEEC) i.e., Whitney forms. The main functionality implemented:
 - simplicial complexes of dimension n embeded in dimension N >= n
 - abstract simplicial complexes (no embedding needed)
-- cubical complexes in all dimension
+- cubical complexes in all dimensions
 - boundary operators for all the above type of complexes
 - discrete exterior derivative (i.e., coboundary operator)
 - DEC discrete Hodge star (i.e., primal-dual diagonal mass matrix)
