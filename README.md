@@ -13,5 +13,9 @@ The code and companion paper include examples for numerically solving PDEs and c
 
 Installation:
 - `cd` to the folder where you cloned PyDEC
-- `pip install pydec`
+- `pip install .`
+
+Note about installation:
+- There is another package called `pydec` which has nothing to do with this package. If you simply do `pip install pydec` then you will get that other package. PyDEC has existed since about 2008, but we were too slow in grabbing `pydec` name on pip :-(
+- So for now, please install by first cloning or downloading the source and then using the installation instructions above.
 
