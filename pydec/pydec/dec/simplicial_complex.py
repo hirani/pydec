@@ -4,8 +4,9 @@ from warnings import warn
 
 import numpy
 import scipy
-from numpy import array, dot, inner, ones, cross, copysign
-from scipy import sparse, zeros, asarray, mat, hstack
+from numpy import array, dot, inner, ones, cross, copysign, zeros, asarray,\
+    mat, hstack
+from scipy import sparse
 
 import pydec
 from pydec.mesh.simplex import simplex, simplicial_mesh

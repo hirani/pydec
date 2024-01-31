@@ -1,6 +1,6 @@
 __all__ = ['regular_cube_complex']
 
-from scipy import ones, ndim
+from numpy import ones, ndim
 import scipy
 
 from pydec.mesh import regular_cube_mesh

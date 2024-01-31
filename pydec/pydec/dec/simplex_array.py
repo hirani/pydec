@@ -1,7 +1,7 @@
 __all__ = ['simplex_array_searchsorted','simplex_array_boundary','simplex_array_parity']
 
 
-from scipy import ravel, zeros, ones, arange, empty, alltrue, array, lexsort, \
+from numpy import ravel, zeros, ones, arange, empty, alltrue, array, lexsort, \
     hstack, vstack, ndim, bincount, cumsum, ascontiguousarray, zeros_like, \
     concatenate, asarray
 from scipy.sparse import csr_matrix

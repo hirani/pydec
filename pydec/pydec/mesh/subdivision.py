@@ -1,7 +1,7 @@
 __all__ = ['loop_subdivision','triangulate_ncube']
 
 from pydec.math.combinatorial import combinations
-from scipy import concatenate,matrix,ravel,array,ndim,vstack,hstack,zeros,arange,tile
+from numpy import concatenate,matrix,ravel,array,ndim,vstack,hstack,zeros,arange,tile
 
 
 def loop_subdivision(vertices,simplices):

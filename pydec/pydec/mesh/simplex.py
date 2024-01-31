@@ -4,7 +4,7 @@ from pydec.math import signed_volume,relative_parity,combinations
 from .base_mesh import base_mesh
 
 
-from scipy import asarray
+from numpy import asarray
 import numpy,scipy
 
 

@@ -1,7 +1,6 @@
 __all__ = ['simplicial_grid_2d','cube_grid']
 
-
-from scipy import zeros,resize,arange,ravel,concatenate,matrix, \
+from numpy import zeros,resize,arange,ravel,concatenate,matrix, \
      transpose,prod,mgrid,ndindex,sum,array,cumprod,tile,ones
 import scipy
 

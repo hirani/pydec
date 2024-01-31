@@ -8,7 +8,7 @@ except ImportError:
     warnings.warn("matplotlib not installed, some loss of functionality will result")
 
 
-from scipy import rand,asarray,zeros,empty,average
+from numpy import asarray,zeros,empty,average
 from pydec import barycentric_gradients,combinations,Simplex
 import numpy
 
