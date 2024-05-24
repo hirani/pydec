@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pydec"
 #dynamic = ["version"]
-version = "1.1.0"
+version = "1.2.1"
 description = "PyDEC: A Python Library for Discretizations of Exterior Calculus."
 #readme = {file = "README.rst", content-type = "text/x-rst"}
 authors = [

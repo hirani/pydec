@@ -129,7 +129,9 @@ def whitney_innerproduct(complex,k):
     if k == 1:
         Fdet = lambda x : x #det for 1x1 matrices - extend
     else:
-        Fdet, = scipy.linalg.flinalg.get_flinalg_funcs(('det',),(complex.vertices,))
+        # scipy.linalg.flinalg was removed in SciPy 1.13.1
+        #Fdet, = scipy.linalg.flinalg.get_flinalg_funcs(('det',),(complex.vertices,))
+        Fdet = scipy.linalg.det
 
 
 
@@ -147,8 +149,9 @@ def whitney_innerproduct(complex,k):
             
             mtxs = d_lambda[k_form_pairs_array]     # these lines are equivalent to:
             for n,(A,B) in enumerate(mtxs):         #   for n,(form1,form2) in enumerate(k_form_pairs):
-                dets[n] = Fdet(inner(A,B))[0]       #       dets[n] = det(dot(d_lambda[form1,:],d_lambda[form2,:].T))
-
+                #dets[n] = Fdet(inner(A,B))[0]      #       dets[n] = det(dot(d_lambda[form1,:],d_lambda[form2,:].T))
+                dets[n] = Fdet(inner(A,B))          #       dets[n] = det(dot(d_lambda[form1,:],d_lambda[form2,:].T))
+                
         volume = complex[-1].primal_volume[i]
         vals = dets_to_vals * dets
         vals *= volume * scale_integration  #scale by the volume, barycentric weights, and account for the p! in each whitney form
