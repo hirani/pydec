@@ -12,7 +12,8 @@ from .util import *
 from .vis import *
 
 __all__ = list(filter(lambda s:not s.startswith('_'),dir()))
-__all__ += ['test', '__version__']
+#__all__ += ['test', '__version__']
+__all__ += ['__version__']
 
 # TODO: replace testing framework with pytest (?) since Tester of nose/numpy is deprecated
 #from pydec.testing import Tester
