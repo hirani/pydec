@@ -1,9 +1,10 @@
 __all__ = ['simplex_array_searchsorted','simplex_array_boundary','simplex_array_parity']
 
 
-from numpy import ravel, zeros, ones, arange, empty, alltrue, array, lexsort, \
+from numpy import ravel, zeros, ones, arange, empty, array, lexsort, \
     hstack, vstack, ndim, bincount, cumsum, ascontiguousarray, zeros_like, \
     concatenate, asarray
+from numpy import all as alltrue  #temporary fix. Change above to np.*     
 from scipy.sparse import csr_matrix
 
 def simplex_array_searchsorted(s, v):

@@ -35,13 +35,17 @@ def hodge_decomposition(omega):
     # Solve for alpha
     A = delta(d(sc.get_cochain_basis(p - 1))).v
     b = delta(omega).v
-    alpha.v = cg( A, b, tol=1e-8 )[0]
-
+    #alpha.v = cg( A, b, tol=1e-8 )[0]
+    alpha.v = cg( A, b, rtol=1e-8 )[0]
+    # TODO: check if rtol should be more or less stringent
+    
     # Solve for beta
     A = d(delta(sc.get_cochain_basis(p + 1))).v
     b = d(omega).v
-    beta.v = cg( A, b, tol=1e-8 )[0]
-    
+    #beta.v = cg( A, b, tol=1e-8 )[0]
+    beta.v = cg( A, b, rtol=1e-8 )[0]
+    # TODO: check if rtol should be more or less stringent
+
     # Solve for h
     h = omega - d(alpha) - delta(beta)    
     

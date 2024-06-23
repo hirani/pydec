@@ -4,7 +4,8 @@ network. Hodge decomposition of a random cochain is used to compute a
 harmonic cochain.
 
 """
-from scipy import rand
+#from scipy import rand
+from numpy.random import rand
 from scipy.linalg import norm
 from scipy.sparse.linalg import cg
 
@@ -23,8 +24,8 @@ b2 = cmplx[2].astype(float)  # face boundary operator
 
 x = rand(b1.shape[1]) # random 1-chain
 # Decompose x using discrete Hodge decomposition
-alpha = cg( b1 * b1.T, b1   * x, tol=1e-8)[0]
-beta  = cg( b2.T * b2, b2.T * x, tol=1e-8)[0]
+alpha = cg( b1 * b1.T, b1   * x, rtol=1e-8)[0] # TODO: Was tol before June 2024. Is this change OK
+beta  = cg( b2.T * b2, b2.T * x, rtol=1e-8)[0]
 h = x - (b1.T * alpha) - (b2 * beta) # harmonic component of x
 h /= abs(h).max() # normalize h
 

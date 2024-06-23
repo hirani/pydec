@@ -1,5 +1,6 @@
-from numpy import vstack, hstack, ones, arange, empty, alltrue, array, \
+from numpy import vstack, hstack, ones, arange, empty, array, \
         lexsort, ravel, hsplit, empty, ascontiguousarray, ndim
+from numpy import all as alltrue  #temporary fix. Change above to np.*     
 
 from scipy.sparse import csr_matrix
 

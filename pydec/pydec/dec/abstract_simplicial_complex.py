@@ -1,4 +1,5 @@
-from numpy import zeros, ones, arange, array, asarray, hstack, vstack, empty, lexsort, atleast_2d, alltrue
+from numpy import zeros, ones, arange, array, asarray, hstack, vstack, empty, lexsort, atleast_2d
+from numpy import all as alltrue #temporary fix. Change above to np.*
 from scipy import sparse
 
 from .simplex_array import simplex_array_parity, simplex_array_boundary, simplex_array_searchsorted
