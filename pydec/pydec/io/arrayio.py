@@ -157,7 +157,8 @@ def read_basic(fid,header):
     try:    dimensions = split_on_comma(header['dims'])
     except: raise FileFormatError('Unable to determine dims')
 
-    try: dtype = numpy.typeDict[header['dtype']]
+    #try: dtype = numpy.typeDict[header['dtype']]
+    try: dtype = numpy.sctypeDict[header['dtype']]
     except: raise FileFormatError('Unable to determine dtype')
     
     if len(dimensions) != 2: raise FileFormatError('basic format only supports 2d arrays')
@@ -192,7 +193,8 @@ def read_ndarray(fid,header):
     try:    dims = split_on_comma(header['dims'])
     except: raise FileFormatError('Unable to determine dims')
 
-    try:    dtype = numpy.typeDict[header['dtype']]
+    #try:    dtype = numpy.typeDict[header['dtype']]
+    try: dtype = numpy.sctypeDict[header['dtype']]
     except: raise FileFormatError('Unable to determine dtype')
 
     try:    format = header['format']
