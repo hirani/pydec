@@ -9,7 +9,7 @@ A. N. Hirani, K. B. Nakshatrala, J. H. Chaudhry
 See arXiv:0810.3434v3 [math.NA] on http://arxiv.org/abs/0810.3434
 
 """
-from numpy import mat, zeros, sort, asarray, loadtxt, array, dot, \
+from numpy import zeros, sort, asarray, loadtxt, array, dot, \
      concatenate, sign, vstack, argmax, nonzero
 from numpy.linalg import norm, det
 from scipy.sparse import bmat

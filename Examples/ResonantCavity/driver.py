@@ -11,8 +11,7 @@ References:
 """
 from pydec import simplicial_complex, d, delta, whitney_innerproduct, \
      simplex_quivers
-from numpy import loadtxt
-from scipy import real, zeros
+from numpy import loadtxt, real, zeros
 from scipy.linalg import eig
 from matplotlib.pylab import quiver, figure, triplot, show
 
