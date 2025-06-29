@@ -267,7 +267,9 @@ class simplicial_complex(list):
         if parent is not None:
             opposite_vertex = list(set(parent) - set(s))[0]
             ov_index = list(parent).index(opposite_vertex)
-            signs[dim] = copysign(1, bpts[-1][ov_index])
+            # June 29, 2025 fix: signs of subdivision simplex volumes
+            #signs[dim] = copysign(1, bpts[-1][ov_index])
+            signs[dim] = copysign(1, bpts[dim+1][ov_index])
         for i in range(dim, self.complex_dimension()):
             sgn *= signs[i]
         data.dual_volume[index] += sgn * unsigned_volume(pts[dim:,:])
