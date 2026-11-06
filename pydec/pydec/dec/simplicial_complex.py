@@ -166,21 +166,48 @@ class simplicial_complex(list):
         
 
     def construct_hodge(self):
-        """Construct the covolume Hodge star for all levels"""        
-        
+        """Construct the covolume Hodge star and its inverse for all levels"""
+        self.construct_hodge_star()
+        self.construct_hodge_star_inv()
+
+    def construct_hodge_star(self):
+        """Construct the covolume Hodge star for all levels: the diagonal
+        matrix of dual volume over primal volume
+        """
         for dim,data in enumerate(self):
-            form_size = data.num_simplices
-            data.star = sparse.lil_matrix((form_size,form_size))                      
-            data.star_inv = sparse.lil_matrix((form_size,form_size))
-            
             stardiag = data.dual_volume / data.primal_volume
             N = len(stardiag)
-            data.star     = sparse.spdiags([stardiag],    [0], N, N, format='csr')
-            data.star_inv = sparse.spdiags([1.0/stardiag],[0], N, N, format='csr')
-            
-            #Choose sign of star_inv to satisfy (star_inv * star) = -1 ^(k*(n-k))
-            n,k = self.complex_dimension(),dim            
-            data.star_inv *= (-1) ** (k * (n - k))                   
+            data.star = sparse.spdiags([stardiag], [0], N, N, format='csr')
+
+    def construct_hodge_star_inv(self, tol=1e-12):
+        """Construct the inverse of the covolume Hodge star for all levels
+
+        The sign is chosen so that star_inv * star = (-1)^(k(n-k)).
+
+        A zero dual volume makes the inverse infinite, and a dual volume
+        that is tiny by cancellation makes it huge: on a mesh with
+        cospherical vertices adjacent simplices can share a circumcenter,
+        and on a mesh that is not Delaunay the signed pieces of a dual
+        cell can cancel.  The entries are left as they are, and a
+        RuntimeWarning says how many dual volumes of each dimension are
+        zero or below tol times the largest of that dimension.
+        """
+        n = self.complex_dimension()
+        for dim,data in enumerate(self):
+            stardiag = data.dual_volume / data.primal_volume
+            N = len(stardiag)
+            with numpy.errstate(divide='ignore'):
+                data.star_inv = sparse.spdiags([1.0/stardiag], [0], N, N, format='csr')
+            k = dim
+            data.star_inv *= (-1) ** (k * (n - k))
+
+            absdual = abs(data.dual_volume)
+            zero = int((absdual == 0).sum())
+            tiny = int((absdual <= tol * absdual.max()).sum()) - zero if N else 0
+            if zero or tiny:
+                warn('star_inv of dimension %d: %d dual volumes are zero (infinite entries)'
+                     ' and %d are below %g of the largest (huge entries)' % (dim, zero, tiny, tol),
+                     RuntimeWarning, stacklevel=3)
 
     # Geometry of the complex.  Everything below is computed for all simplices
     # of a dimension at once, in NumPy batches, rather than one simplex at a
@@ -386,10 +413,10 @@ class simplicial_complex(list):
             if attr == "d":
                 return self.d.tocsr()
             elif attr == "star":
-                self.complex.construct_hodge()
+                self.complex.construct_hodge_star()
                 return self.star
             elif attr == "star_inv":
-                self.complex.construct_hodge()
+                self.complex.construct_hodge_star_inv()
                 return self.star_inv
             elif attr == "circumcenter":
                 self.complex.compute_circumcenters(self.dim)

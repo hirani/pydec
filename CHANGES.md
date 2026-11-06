@@ -31,6 +31,19 @@ New functions in `pydec.math`, each acting on a stack of simplices: `circumcente
 unchanged apart from `numpy.bmat` becoming `numpy.block`, which removes a
 `PendingDeprecationWarning` and does not change the numbers.
 
+### `star_inv` is built on its own and warns about zero dual volumes
+
+`construct_hodge` used to build `star` and `star_inv` together, so asking for `star` on a
+mesh with a zero dual volume produced NumPy's divide-by-zero warning. Now `sc[k].star`
+calls `construct_hodge_star` and `sc[k].star_inv` calls `construct_hodge_star_inv`;
+`construct_hodge` still builds both. The values and the sign convention,
+`star_inv * star = (-1)^(k(n-k))`, are unchanged. When `star_inv` is built, a
+`RuntimeWarning` says how many dual volumes of each dimension are zero (infinite entries)
+or below `tol` (default 1e-12) of the largest (huge entries); nothing is clipped or
+regularised. Zero dual volumes occur on meshes with cospherical vertices, for instance a
+cube cut into six tetrahedra that share the cube's centre, and tiny ones by cancellation
+on meshes that are not Delaunay.
+
 ### NumPy 2.4 compatibility
 
 `whitney_innerproduct(sc, 1)` raised `ValueError: setting an array element with a

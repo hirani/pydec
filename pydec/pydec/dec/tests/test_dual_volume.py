@@ -129,3 +129,36 @@ def test_dual_volume_identity():
             # for the cospherical grid tets, and the identity sums many signed terms
             assert_allclose(np.dot(np.abs(data.primal_volume), data.dual_volume), comb(n, k) * total,
                             rtol=1e-8, err_msg=f'{name} dim {k}')
+
+
+def test_star_inv_warns_on_zero_dual_volume():
+    """six Kuhn tets of a cube share its centre, so interior faces have zero dual length"""
+    import warnings
+    V, T = grid_tets(2)
+    sc = simplicial_complex((V, T))
+    with warnings.catch_warnings():
+        warnings.simplefilter('error')
+        for data in sc:
+            data.star            # must not warn, even though some dual volumes are zero
+    n = sc.complex_dimension()
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter('always')
+        for data in sc:
+            data.star_inv
+    assert any('zero' in str(x.message) for x in w)
+    assert np.isinf(sc[n - 1].star_inv.diagonal()).any()
+    for k, data in enumerate(sc):
+        sign = (-1) ** (k * (n - k))
+        d = data.star.diagonal() * data.star_inv.diagonal()
+        finite = np.isfinite(d)
+        assert_allclose(d[finite], sign, rtol=1e-12)
+
+
+def test_star_inv_sign_and_values():
+    rng = np.random.default_rng(3)
+    V = rng.random((80, 3)); T = Delaunay(V).simplices
+    sc = simplicial_complex((V, T))
+    n = sc.complex_dimension()
+    for k, data in enumerate(sc):
+        sign = (-1) ** (k * (n - k))
+        assert_array_equal(data.star_inv.diagonal(), sign / data.star.diagonal())
