@@ -25,6 +25,11 @@ are bitwise identical and dual volumes agree to 1e-13 of their largest value.
 The old recursion is kept as `simplicial_complex._compute_dual_volume_reference` for
 tests; `dec/tests/test_dual_volume.py` compares the two.
 
+One difference, on meshes that list the same top simplex twice (an error in the mesh): the
+old code gave one copy a dual volume of 2 and the other 0, an accident of its dictionary
+lookup; the new code gives each copy 1. The dual volumes of the faces are the same in
+both, and both count the faces of the duplicated simplex twice.
+
 New functions in `pydec.math`, each acting on a stack of simplices: `circumcenters`,
 `circumcenters_barycentric`, `unsigned_volumes`, `signed_volumes`. The per-simplex
 `circumcenter`, `circumcenter_barycentric`, `unsigned_volume` and `signed_volume` are
