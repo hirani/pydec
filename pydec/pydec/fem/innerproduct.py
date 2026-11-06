@@ -127,7 +127,8 @@ def whitney_innerproduct(complex,k):
 
     ## COMPUTATION
     if k == 1:
-        Fdet = lambda x : x #det for 1x1 matrices - extend
+        # inner(A,B) is a 1x1 array; NumPy >= 2.4 refuses to store it in a float slot
+        Fdet = lambda x : x.item() #det for 1x1 matrices
     else:
         # scipy.linalg.flinalg was removed in SciPy 1.13.1
         #Fdet, = scipy.linalg.flinalg.get_flinalg_funcs(('det',),(complex.vertices,))
