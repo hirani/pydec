@@ -87,7 +87,7 @@ def permutation_parity(perm, check_input=True):
 
     n = len(perm)
     if check_input:
-        rangen = range(n)
+        rangen = list(range(n))
         if sorted(perm) != rangen:
             raise ValueError("Invalid input")
 

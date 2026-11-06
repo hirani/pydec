@@ -36,8 +36,8 @@ def cube_array_search(k_face_array,k_faces):
     
     lookup_grid = empty(lookup_grid_dimensions,dtype=k_faces.dtype)
     lookup_grid[:] = -1
-    lookup_grid[hsplit(k_face_array,k_face_array.shape[1])] = arange(k_face_array.shape[0],dtype=k_faces.dtype).reshape((-1,1))
-    row_indices = lookup_grid[hsplit(k_faces,k_faces.shape[1])].reshape((-1))
+    lookup_grid[tuple(k_face_array.T)] = arange(k_face_array.shape[0],dtype=k_faces.dtype)
+    row_indices = lookup_grid[tuple(k_faces.T)]
 
     return row_indices
 
@@ -74,7 +74,7 @@ def cube_array_boundary(cubes,dim):
     faces = faces[lexsort([faces[:,i] for i in reversed(range(faces.shape[1]-2))])]
 
     #find unique faces
-    face_mask = -hstack((array([False]),alltrue(faces[1:,:-2] == faces[:-1,:-2],axis=1)))
+    face_mask = ~hstack((array([False]),alltrue(faces[1:,:-2] == faces[:-1,:-2],axis=1)))
 
     unique_faces = faces[face_mask,:-2].copy()
 

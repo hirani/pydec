@@ -181,7 +181,7 @@ def regular_cube_innerproduct(rcc,k):
     N = rcc.complex_dimension()
 
     #standard cube is [0,0,..,0] [0,1,...,N]   
-    standard_cube  = atleast_2d(array([0]*N + range(N),dtype='i'))
+    standard_cube  = atleast_2d(array([0]*N + list(range(N)),dtype='i'))
     standard_k_faces = standard_cube
     for i in range(N,k,-1):        
         standard_k_faces = cube_array_boundary(standard_k_faces,i)[0]

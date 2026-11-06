@@ -217,7 +217,7 @@ def read_ndarray(fid,header):
 def write_ndarray(fid,A,format):
     header = ndarray_header(A)
     header['format'] = format
-    fid.write(header.tostring())    
+    fid.write(header.tostring().encode('utf-8'))    
 
     if format == 'binary':      
         if sys.byteorder == 'little':
@@ -226,7 +226,7 @@ def write_ndarray(fid,A,format):
             A.byteswap().tofile(fid)
     elif format == 'ascii':        
         A.tofile(fid,sep=' ',format='%.16g')
-        if A.size > 0: fid.write('\n') #only introduce newline when something has been written
+        if A.size > 0: fid.write(b'\n') #only introduce newline when something has been written
     else:
         raise ArrayIOException('Unknown file format: ['+format+']')
 
@@ -277,7 +277,7 @@ def write_sparse(fid,A,format):
     
     header = sparse_header(A)
     header['format'] = format
-    fid.write(header.tostring())
+    fid.write(header.tostring().encode('utf-8'))
     
     if A.format == 'csr':
         write_array(fid, A.data, format)
