@@ -1,7 +1,8 @@
 from pydec.testing import *
 
-from scipy import array,array,sparse,zeros,ones,eye,allclose,alltrue, \
-                isreal,real,dot,concatenate,sqrt,shape,ix_
+from numpy import array, zeros, ones, eye, allclose, isreal, real, dot, concatenate, sqrt, shape, ix_
+from numpy import all as alltrue
+from scipy import sparse
 from scipy.special import factorial, comb
 from scipy.linalg import eigvals,inv,det
 
@@ -177,8 +178,8 @@ class test_whitney_innerproduct(TestCase):
             assert_almost_equal(M,expected)
             
             #check whether matrix is S.P.D.
-            self.assert_(alltrue(isreal(eigvals(M))))
-            self.assert_(min(real(eigvals(M))) >= 0)
+            self.assertTrue(alltrue(isreal(eigvals(M))))
+            self.assertTrue(min(real(eigvals(M))) >= 0)
             assert_almost_equal(M,M.T)
 
 

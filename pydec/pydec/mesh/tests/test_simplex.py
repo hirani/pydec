@@ -1,6 +1,6 @@
 from pydec.testing import *
 
-from scipy import array
+from numpy import array
 
 from pydec.mesh.simplex import simplex,simplicial_mesh
 

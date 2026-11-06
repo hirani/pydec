@@ -30,11 +30,11 @@ def test_relative_parity():
     for perm,parity in cases:
         #check lists of integers
         assert_equal(relative_parity(perm,perm), 0) 
-        assert_equal(relative_parity(perm,range(len(perm))), parity)
+        assert_equal(relative_parity(perm,list(range(len(perm)))), parity)
         
         #check lists of strings        
-        L1 = map(str,perm)
-        L2 = map(str,range(len(perm)))
+        L1 = list(map(str,perm))
+        L2 = list(map(str,range(len(perm))))
         assert_equal(relative_parity(L1,L1), 0)
         assert_equal(relative_parity(L1,L2), parity)
 

@@ -1,6 +1,8 @@
 from pydec.testing import *
 
-from scipy import random,rand,array,reshape,sqrt,sum,allclose
+from numpy import array, reshape, sqrt, sum, allclose
+from numpy import random
+from numpy.random import rand
 
 from pydec.math.circumcenter import circumcenter,is_wellcentered
 
@@ -9,11 +11,11 @@ class TestCircumcenter(TestCase):
         random.seed(0) #make tests repeatable                 
 
     def test_is_well_centered(self):
-        self.assert_(is_wellcentered(array([[1]])))
-        self.assert_(is_wellcentered(array([[0,1]])))
-        self.assert_(is_wellcentered(array([[0],[1]])))
-        self.assert_(is_wellcentered(array([[0,1],[1,0]])))
-        self.assert_(is_wellcentered(array([[0,0],[1,0],[0.5,sqrt(3)/2]])))
+        self.assertTrue(is_wellcentered(array([[1]])))
+        self.assertTrue(is_wellcentered(array([[0,1]])))
+        self.assertTrue(is_wellcentered(array([[0],[1]])))
+        self.assertTrue(is_wellcentered(array([[0,1],[1,0]])))
+        self.assertTrue(is_wellcentered(array([[0,0],[1,0],[0.5,sqrt(3)/2]])))
         
     
     def test_spheres(self):

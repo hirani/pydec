@@ -2,7 +2,7 @@ from pydec.testing import *
 
 import numpy
 from numpy import array, matrix
-from scipy import rand
+from numpy.random import rand
 from scipy.linalg import norm
 
 from pydec.dec.rips_complex import rips_complex, rips_simplices, \

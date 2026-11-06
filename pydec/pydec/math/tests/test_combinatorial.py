@@ -5,9 +5,9 @@ from scipy.special import factorial, comb
 from pydec.math.combinatorial import combinations, permutations
 
 def test_combinations():
-    for N in xrange(6):
-        L = range(N)            
-        for K in xrange(N+1):                
+    for N in range(6):
+        L = list(range(N))            
+        for K in range(N+1):                
             C = list(combinations(L,K))
             S = set([ frozenset(x) for x in C])
             ##Check order
@@ -20,8 +20,8 @@ def test_combinations():
 
 def test_permutations():
     assert_equal(list(permutations([])),[])
-    for N in xrange(1,6):
-        L = range(N)            
+    for N in range(1,6):
+        L = list(range(N))            
         P = list(permutations(L))
         S = set([ frozenset(x) for x in P])
         ##Check number of elements

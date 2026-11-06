@@ -1,6 +1,8 @@
 from pydec.testing import *
 
-from scipy import fabs, random, rand, array, sqrt
+from numpy import fabs, array, sqrt
+from numpy import random
+from numpy.random import rand
 
 from pydec.math.volume import unsigned_volume, signed_volume
 

@@ -1,6 +1,8 @@
 from pydec.testing import *
 
-from scipy import arange, prod, reshape, rand, random, allclose, ndim, zeros
+from numpy import arange, prod, reshape, allclose, ndim, zeros
+from numpy import random
+from numpy.random import rand
 from scipy.sparse import csr_matrix, csc_matrix, coo_matrix
 
 from pydec.io.arrayio import write_array, read_array

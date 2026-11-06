@@ -1,6 +1,6 @@
 from pydec.testing import *
 
-from scipy import arange, array
+from numpy import arange, array
 
 from pydec.dec.cube_array import * 
 

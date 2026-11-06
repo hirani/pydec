@@ -1,6 +1,8 @@
 from pydec.testing import *
 
-from scipy import random,arange,alltrue,array
+from numpy import arange, array
+from numpy import all as alltrue
+from numpy import random
 
 from pydec.dec.simplex_array import simplex_array_boundary, \
      simplex_array_parity, simplex_array_searchsorted

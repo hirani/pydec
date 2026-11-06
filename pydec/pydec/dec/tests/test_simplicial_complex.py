@@ -1,6 +1,9 @@
 from pydec.testing import *
 
-from scipy import random, rand, concatenate, zeros, sparse, matrix, sqrt
+from numpy import concatenate, zeros, matrix, sqrt
+from numpy import random
+from numpy.random import rand
+from scipy import sparse
 
 from pydec.dec import simplicial_complex
 from pydec.mesh.simplex import simplex

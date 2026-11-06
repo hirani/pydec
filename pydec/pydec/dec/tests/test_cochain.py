@@ -1,6 +1,8 @@
 from pydec.testing import *
 
-from scipy import array, alltrue, array, sqrt, sparse
+from numpy import array, sqrt
+from numpy import all as alltrue
+from scipy import sparse
 
 from pydec.dec import simplicial_complex
 from pydec.dec.cochain import d, laplace_beltrami, laplace_derham, star

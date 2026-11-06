@@ -1,6 +1,8 @@
 from pydec.testing import *
 
-from scipy import random, array, sqrt, sum
+from numpy import array, sqrt, sum
+from numpy import random
+from numpy.random import rand
 
 from pydec.math.kd_tree import kd_tree
 

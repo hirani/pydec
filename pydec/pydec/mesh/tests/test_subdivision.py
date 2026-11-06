@@ -20,7 +20,7 @@
 #                unsigned_sum += unsigned_volume(v[row])
 #                signed_sum   += signed_volume(v[row])
 #                
-#            self.assert_(allclose(unsigned_sum,1))
-#            self.assert_(allclose(signed_sum,1))
+#            self.assertTrue(allclose(unsigned_sum,1))
+#            self.assertTrue(allclose(signed_sum,1))
 #
 #

@@ -2,8 +2,11 @@ from pydec.testing import *
 
 import os
 
-from scipy import random, arange, alltrue, array, rand, allclose, \
-        concatenate, zeros, shape, sparse, matrix, sqrt
+from numpy import arange, array, allclose, concatenate, zeros, shape, matrix, sqrt
+from numpy import all as alltrue
+from numpy import random
+from numpy.random import rand
+from scipy import sparse
 
 from pydec.dec import simplicial_complex
 from pydec.mesh import simplicial_mesh,simplex
@@ -23,7 +26,7 @@ for name in mesh_filenames:
 
          
 def test_exactness():
-    for mesh in meshes.itervalues():
+    for mesh in meshes.values():
         sc = simplicial_complex(mesh)
 
         cmplx = sc.chain_complex()
@@ -33,7 +36,7 @@ def test_exactness():
 
 def test_faces():
     """check whether faces are correct"""
-    for mesh in meshes.itervalues():
+    for mesh in meshes.values():
         sc = simplicial_complex(mesh)
 
         for face_data,cell_data in zip(sc[:-1],sc[1:]):
@@ -51,7 +54,7 @@ def test_faces():
 def test_boundary():
     """check boundary operators (assumes correct faces)"""
     
-    for mesh in meshes.itervalues():
+    for mesh in meshes.values():
         sc = simplicial_complex(mesh)
         assert_equal(sc[0].boundary.shape,(1,sc[0].simplices.shape[0]))
         assert_equal(sc[0].boundary.nnz,0)
