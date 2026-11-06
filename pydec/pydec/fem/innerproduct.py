@@ -68,10 +68,102 @@ def massmatrix_rowcols(complex,k):
 
 
 
+def _barycentric_gradients_batch(pts):
+    """
+    barycentric_gradients for many simplices at once: pts has shape
+    (L, M+1, N), the result (L, M+1, N)
+    """
+    pts = asarray(pts, dtype=float)
+    V = pts[:,1:,:] - pts[:,:1,:]
+    grads = numpy.linalg.inv(V @ V.transpose(0,2,1)) @ V
+    return concatenate((-grads.sum(axis=1, keepdims=True), grads), axis=1)
+
+
 def whitney_innerproduct(complex,k):
     """
     For a given SimplicialComplex, compute a matrix representing the 
     innerproduct of Whitney k-forms
+
+    All top simplices are handled at once, one array operation per pair
+    of k-forms; see _whitney_innerproduct_reference for the same
+    computation one simplex at a time.
+    """
+    assert(k >= 0 and k <= complex.complex_dimension())    
+        
+    ## MASS MATRIX COO DATA
+    rows,cols = massmatrix_rowcols(complex,k)
+
+
+    ## PRECOMPUTATION
+    p = complex.complex_dimension()
+   
+    scale_integration = (factorial(k)**2)/((p + 2)*(p + 1))   
+    
+    k_forms = [tuple(x) for x in combinations(range(p+1),k)]
+    k_faces = [tuple(x) for x in combinations(range(p+1),k+1)]
+
+    num_k_forms = len(k_forms)
+    num_k_faces = len(k_faces)
+
+    k_form_pairs = [tuple(x) for x in combinations(k_forms,2)] + [(x,x) for x in k_forms]
+    num_k_form_pairs = len(k_form_pairs)
+    k_form_pairs_to_index = dict(zip(k_form_pairs,range(num_k_form_pairs)))
+    k_form_pairs_to_index.update(zip([x[::-1] for x in k_form_pairs],range(num_k_form_pairs)))
+    num_k_face_pairs = num_k_faces**2
+
+    #maps flat vector of determinants to the flattened matrix entries
+    dets_to_vals = zeros((num_k_face_pairs,num_k_form_pairs))
+
+    row_index = 0
+    for face1 in k_faces:
+        for face2 in k_faces:
+            for n in range(k+1):
+               for m in range(k+1):
+                   form1 = face1[:n] + face1[n+1:]
+                   form2 = face2[:m] + face2[m+1:]
+
+                   col_index = k_form_pairs_to_index[(form1,form2)]
+
+                   dets_to_vals[row_index,col_index] += (-1)**(n+m)*((face1[n] == face2[m]) + 1)                 
+            row_index += 1
+    ## END PRECOMPUTATION
+
+
+    ## COMPUTATION
+    simplices = complex[-1].simplices
+    num_simplices = simplices.shape[0]
+    volumes = complex[-1].primal_volume
+    data = empty((num_simplices,num_k_face_pairs))
+    chunk = 1 << 18
+
+    for lo in range(0,num_simplices,chunk):
+        s = simplices[lo:lo+chunk]
+        L = s.shape[0]
+
+        # for k=0, dets is already correct i.e. dets[:] = 1
+        dets = ones((L,num_k_form_pairs))
+        if k > 0:
+            # d_lambda[:,i,:] is the gradient of the i-th barycentric basis function in each simplex
+            d_lambda = _barycentric_gradients_batch(complex.vertices[s,:])
+            for n,(form1,form2) in enumerate(k_form_pairs):
+                A = d_lambda[:,form1,:]
+                B = d_lambda[:,form2,:]
+                G = A @ B.transpose(0,2,1)          # (L,k,k): dot(d_lambda[form1,:],d_lambda[form2,:].T) per simplex
+                dets[:,n] = G[:,0,0] if k == 1 else numpy.linalg.det(G)
+
+        vals = dets @ dets_to_vals.T
+        vals *= (volumes[lo:lo+chunk] * scale_integration)[:,None]  #scale by the volume, barycentric weights, and account for the p! in each whitney form
+        data[lo:lo+chunk] = vals
+
+    #now rows,cols,data form a COOrdinate representation for the mass matrix
+    shape = (complex[k].num_simplices,complex[k].num_simplices)  
+    return coo_matrix((data.ravel(),(rows,cols)), shape).tocsr()
+
+
+def _whitney_innerproduct_reference(complex,k):
+    """
+    whitney_innerproduct one simplex at a time: the loop that
+    whitney_innerproduct vectorises, kept as the reference for tests.
     """
     assert(k >= 0 and k <= complex.complex_dimension())    
         

@@ -36,6 +36,29 @@ New functions in `pydec.math`, each acting on a stack of simplices: `circumcente
 unchanged apart from `numpy.bmat` becoming `numpy.block`, which removes a
 `PendingDeprecationWarning` and does not change the numbers.
 
+### Whitney form mass matrices: `whitney_innerproduct` vectorised
+
+The element loop of `whitney_innerproduct` (barycentric gradients, one small determinant
+per pair of k-forms, and the local matrix, one top simplex at a time) now runs on all top
+simplices at once, one array operation per pair of k-forms. The sparsity structure and the
+formula are unchanged; the 1-form and 2-form matrices of a 1.07M-tetrahedron mesh take
+15 s instead of 157 s. The old loop is kept as
+`fem.innerproduct._whitney_innerproduct_reference` for tests; `fem/tests/test_whitney_batch.py`
+compares the two.
+
+The entries agree with the old code to roundoff times the conditioning of the element:
+1e-15 relative on well-shaped elements, up to 1e-8 on slivers, where the inverse of the
+Gram matrix of the edge vectors is computed by a different LAPACK route (`numpy.linalg.inv`
+in a batch rather than `scipy.linalg.inv` per element). Checked against a 40-digit
+evaluation of the same formula: both old and new are within eps times the Gram condition
+number of the exact local matrix, and the new code is the closer of the two on about 55%
+of elements.
+
+Note, unchanged: the local matrices are scaled by the *signed* volume of the top simplex
+when the complex has the dimension of its embedding, so a top simplex listed with negative
+orientation gets a negative local mass matrix. Meshes from tetgen and triangle are
+positively oriented; meshes from `scipy.spatial.Delaunay` are not.
+
 ### `star_inv` is built on its own and warns about zero dual volumes
 
 `construct_hodge` used to build `star` and `star_inv` together, so asking for `star` on a
