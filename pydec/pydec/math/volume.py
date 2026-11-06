@@ -1,8 +1,64 @@
-__all__ = ['unsigned_volume','signed_volume']
+__all__ = ['unsigned_volume','signed_volume','unsigned_volumes','signed_volumes']
 
+import numpy
 from numpy import sqrt,inner,shape,asarray
 from scipy.special import factorial
 from scipy.linalg import det
+
+
+def unsigned_volumes(pts):
+    """Unsigned volumes of many simplices at once.
+
+    Parameters
+    ----------
+    pts : array
+        Array with shape (L,M+1,N): L simplices, each an M-simplex in
+        N-dimensional space, given by its M+1 vertices.
+
+    Returns
+    -------
+    volumes : array
+        Shape (L,).  unsigned_volumes(pts)[i] == unsigned_volume(pts[i]).
+
+    Zero-dimensional simplices (points) are assigned unit volumes.
+    """
+    pts = asarray(pts, dtype=float)
+    if pts.ndim != 3:
+        raise ValueError('expected an array of shape (L,M+1,N)')
+    L, M, N = pts.shape
+    M -= 1
+    if M < 0 or M > N:
+        raise ValueError('array has invalid shape')
+    if M == 0:
+        return numpy.ones(L)
+    A = pts[:,1:,:] - pts[:,:1,:]
+    G = A @ A.transpose(0,2,1)
+    return sqrt(abs(numpy.linalg.det(G)))/factorial(M)
+
+
+def signed_volumes(pts):
+    """Signed volumes of many simplices at once.
+
+    Parameters
+    ----------
+    pts : array
+        Array with shape (L,M+1,M): L simplices, each an M-simplex in
+        M-dimensional space.
+
+    Returns
+    -------
+    volumes : array
+        Shape (L,).  signed_volumes(pts)[i] == signed_volume(pts[i]).
+    """
+    pts = asarray(pts, dtype=float)
+    if pts.ndim != 3:
+        raise ValueError('expected an array of shape (L,M+1,M)')
+    L, M, N = pts.shape
+    M -= 1
+    if M != N:
+        raise ValueError('array has invalid shape')
+    A = pts[:,1:,:] - pts[:,:1,:]
+    return numpy.linalg.det(A)/factorial(M)
 
 
 def unsigned_volume(pts):

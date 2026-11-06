@@ -4,13 +4,15 @@ from warnings import warn
 
 import numpy
 import scipy
-from numpy import array, dot, inner, ones, cross, copysign, zeros, asarray, hstack
+from numpy import array, dot, inner, ones, cross, copysign, zeros, asarray, hstack, \
+        arange, bincount, empty, intp
 from scipy import sparse
 
 import pydec
 from pydec.mesh.simplex import simplex, simplicial_mesh
 from pydec.math import (circumcenter, unsigned_volume, signed_volume,
-                            circumcenter_barycentric)
+                            circumcenter_barycentric, circumcenters,
+                            unsigned_volumes, signed_volumes)
 
 from .simplex_array import simplex_array_parity, simplex_array_boundary
 from .cochain import cochain
@@ -180,50 +182,133 @@ class simplicial_complex(list):
             n,k = self.complex_dimension(),dim            
             data.star_inv *= (-1) ** (k * (n - k))                   
 
+    # Geometry of the complex.  Everything below is computed for all simplices
+    # of a dimension at once, in NumPy batches, rather than one simplex at a
+    # time in Python.  The per-simplex functions in pydec.math (circumcenter,
+    # unsigned_volume, ...) define what each batch must equal.
+
+    _chunk = 1 << 20   # simplices per batch; bounds the temporaries
+
     def compute_bary_circumcenters(self,dim):
         """Compute circumcenters for all simplices at a given
         dimension in barycentric coordinates
         """
-        data = self[dim]            
-        data.bary_circumcenter = zeros((data.num_simplices,
-                                        dim + 1))
-        
-        for i,s in enumerate(data.simplices):
-            pts = self.vertices[[x for x in s],:]
-            data.bary_circumcenter[i] = circumcenter_barycentric(pts)
-            
+        self.compute_circumcenters(dim)
+
     def compute_circumcenters(self,dim):
-        """Compute circumcenters for all simplices at a given dimension
+        """Compute circumcenters for all simplices at a given dimension,
+        in both embedding and barycentric coordinates
         """
-        data = self[dim]            
+        data = self[dim]
         data.circumcenter = zeros((data.num_simplices,
                                        self.embedding_dimension()))
-        
-        for i,s in enumerate(data.simplices):
-            pts = self.vertices[[x for x in s],:]
-            data.circumcenter[i] = circumcenter(pts)[0]
+        data.bary_circumcenter = zeros((data.num_simplices,
+                                        dim + 1))
+        for lo in range(0, data.num_simplices, self._chunk):
+            pts = self.vertices[data.simplices[lo:lo + self._chunk],:]
+            c, bc = circumcenters(pts)
+            data.circumcenter[lo:lo + self._chunk] = c
+            data.bary_circumcenter[lo:lo + self._chunk] = bc
 
     def compute_primal_volume(self,dim):
         """Compute the volume of all simplices for a given dimension
 
         If the top simplex is of the same dimension as its embedding,
-        the signed volume is computed.        
+        the signed volume is computed.
         """
         data = self[dim]
         data.primal_volume = zeros((data.num_simplices,))
 
         if dim == self.embedding_dimension():
-            for i,s in enumerate(self.simplices):
-                pts = self.vertices[s,:]            
-                data.primal_volume[i] = signed_volume(pts)
+            simplices, volumes = self.simplices, signed_volumes
         else:
+            simplices, volumes = data.simplices, unsigned_volumes
 
-            for i,s in enumerate(data.simplices):
-                pts = self.vertices[s,:]            
-                data.primal_volume[i] = unsigned_volume(pts)
+        for lo in range(0, data.num_simplices, self._chunk):
+            pts = self.vertices[simplices[lo:lo + self._chunk],:]
+            data.primal_volume[lo:lo + self._chunk] = volumes(pts)
 
     def compute_dual_volume(self):
         """Compute dual volumes for simplices of all dimensions
+
+        The circumcentric dual cell of a k-simplex s is the union, over all
+        chains s = s_k < s_{k+1} < ... < s_n of faces of top simplices, of
+        the simplex spanned by the circumcenters of s_k, ..., s_n.  Its
+        volume is the sum of the signed volumes of those simplices, where
+        the sign of a chain is the product, over its steps s_i < s_{i+1},
+        of the sign of the barycentric coordinate of the circumcenter of
+        s_{i+1} at the vertex opposite s_i.  That is +1 when the
+        circumcenter of s_{i+1} lies on the same side of s_i as the
+        opposite vertex and -1 otherwise, so the volumes are signed as in
+        Hirani, Kalyanaraman and VanderZee, "Delaunay Hodge star", CAD 2013.
+
+        All chains of all top simplices are visited at once, one array
+        operation per step of the chain; the recursion is over the
+        (n+1)!/(k+1)! shapes a chain can have.  See
+        _compute_dual_volume_reference for the same computation one
+        simplex at a time.
+        """
+        n = self.complex_dimension()
+        for dim,data in enumerate(self):
+            data.dual_volume = zeros((data.num_simplices,))
+
+        for dim in range(n + 1):
+            self[dim].circumcenter     # computed if not already there
+        faces_of = [None] + [self.__faces_of(dim) for dim in range(1, n + 1)]
+
+        top = self[n]
+        for lo in range(0, top.num_simplices, self._chunk):
+            idx = arange(lo, min(lo + self._chunk, top.num_simplices))
+            pts = zeros((len(idx), n + 1, self.embedding_dimension()))
+            self.__dual_volume_chains(idx, n, pts, ones(len(idx)), faces_of)
+
+    def __dual_volume_chains(self, idx, dim, pts, sgn, faces_of):
+        ## idx: indices of dim-simplices, one per chain being followed
+        ## pts: pts[:,dim:,:] holds the circumcenters of the chain so far,
+        ##      from the current simplex up to the top simplex
+        ## sgn: the sign of each chain so far
+        data = self[dim]
+        pts[:,dim,:] = data.circumcenter[idx]
+        volumes = unsigned_volumes(pts[:,dim:,:])
+        data.dual_volume += bincount(idx, weights=sgn * volumes,
+                                     minlength=data.num_simplices)
+        if dim > 0:
+            bary = data.bary_circumcenter[idx]
+            for j in range(dim + 1):
+                # the face opposite the j-th vertex of each simplex
+                self.__dual_volume_chains(faces_of[dim][idx,j], dim - 1,
+                                          pts, sgn * copysign(1.0, bary[:,j]),
+                                          faces_of)
+
+    def __faces_of(self, dim):
+        """faces_of[i,j]: index into self[dim-1].simplices of the face of
+        the i-th dim-simplex obtained by dropping its j-th vertex (in the
+        sorted vertex order of self[dim].simplices)
+        """
+        data = self[dim]
+        S = asarray(data.simplices, dtype=intp)
+        B = sparse.csc_matrix(data.boundary)
+        B.sort_indices()
+        if not (numpy.diff(B.indptr) == dim + 1).all():
+            raise ValueError('boundary matrix has a column without dim + 1 faces')
+        F = B.indices.reshape(data.num_simplices, dim + 1).astype(intp)
+        faces = asarray(self[dim - 1].simplices, dtype=intp)
+        # the vertex of S[i] missing from face F[i,c], and its position in S[i]
+        dropped = S.sum(axis=1)[:,None] - faces[F].sum(axis=2)
+        j = (S[:,None,:] == dropped[:,:,None]).argmax(axis=2)
+        faces_of = empty((data.num_simplices, dim + 1), dtype=intp)
+        faces_of[arange(data.num_simplices)[:,None], j] = F
+        # check: dropping vertex j of S[i] gives exactly the face found
+        keep = ~numpy.eye(dim + 1, dtype=bool)
+        expected = numpy.broadcast_to(S[:,None,:], (data.num_simplices, dim + 1, dim + 1))[:, keep]
+        if not (faces[faces_of] == expected.reshape(data.num_simplices, dim + 1, dim)).all():
+            raise ValueError('face lookup disagrees with the boundary matrix')
+        return faces_of
+
+    def _compute_dual_volume_reference(self):
+        """Dual volumes one simplex at a time, by the recursion that
+        compute_dual_volume vectorises.  Kept as the reference for tests;
+        far too slow for large meshes.
         """
         for dim,data in enumerate(self):
             data.dual_volume = zeros((data.num_simplices,))
@@ -240,13 +325,13 @@ class simplicial_complex(list):
                                        temp_bcenters,
                                        temp_signs,
                                        self.complex_dimension())
-            
-    def __compute_dual_volume(self, s, parent, pts, bpts, signs, dim):    
+
+    def __compute_dual_volume(self, s, parent, pts, bpts, signs, dim):
         ## s: simplex whose dual volume is desired (NumPy array)
         ## parent: simplex initiating this call whose face is s (NumPy
-        ## array) 
+        ## array)
         ## pts: circumcenters at all dimensions (NumPy array)
-        ## bpts: circumcenters at all dimensions in barycentric 
+        ## bpts: circumcenters at all dimensions in barycentric
         ## coordinates (Python list)
 
         ## Remark: Sign s is determined by location of cicumcenter
@@ -260,7 +345,7 @@ class simplicial_complex(list):
         ## corresponds to the opposite vertex.
 
         data = self[dim]
-        index = data.simplex_to_index[s]  
+        index = data.simplex_to_index[s]
         pts[dim] = data.circumcenter[index]
         bpts[dim] = data.bary_circumcenter[index]
         sgn = 1
